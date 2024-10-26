@@ -56,7 +56,7 @@ export default function Index() {
         }
         // 動的にURLを設定する
         const form = event.currentTarget;
-        form.action = `/set_seats_position?height=${height}&width=${width}`;
+        form.action = `/set_seats_position?height=${height}&width=${width}&seats_amount=${seatsAmount}`;
     }
 
     return (
