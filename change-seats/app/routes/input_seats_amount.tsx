@@ -18,8 +18,8 @@ export default function Index() {
     //clientでやってほしいので
     const [seatsAmount, setSeatsAmount] = useState(1); 
     const [isInputted, setIsInputted] = useState(false);
-    const [height, setHeight] = useState(0);
-    const [width, setWidth] = useState(0);
+    const [height, setHeight] = useState<number>();
+    const [width, setWidth] = useState<number>();
     const [errMsg, setErrMsg] = useState("");
     function clickedSeatsAmount() {
         // 一応確認 
