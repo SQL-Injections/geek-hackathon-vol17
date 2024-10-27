@@ -36,7 +36,7 @@ export default function Index() {
         event.preventDefault(); // すぐに送信せず待機
 
         // fetcherを使用してユーザーデータを確認
-        await fetcher.submit(null, { method: "get", action: `/api/student_dat?usr_id=${usrId}&class_id=${classId}` });
+        await fetcher.submit(null, { method: "get", action: `/student_dat?usr_id=${usrId}&class_id=${classId}` });
     }
 
     useEffect(() => {
