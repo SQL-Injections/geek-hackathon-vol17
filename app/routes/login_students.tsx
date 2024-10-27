@@ -1,9 +1,9 @@
 import type { MetaFunction, LoaderFunctionArgs } from "@remix-run/node";
-import { Form } from "@remix-run/react";
+import { Form, useFetcher } from "@remix-run/react";
 import styles from "~/styles/login_students.module.css";
 import { idToClassSeats, pushIdAndSeats} from "~/routes/assets/class_dat";
 import { isValidUsr, pushUsr } from "./assets/student_dat";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export const meta: MetaFunction = () => {
     return [
@@ -19,6 +19,7 @@ export default function Index() {
     const [usrName, setUsrName] = useState("");
     const [classId, setClassId] = useState<number>();
     const [isInputted, setIsInputted] = useState(false);
+    const fetcher = useFetcher();
     
     function clickedLogin() {
         // 一応確認
@@ -31,15 +32,30 @@ export default function Index() {
         }
     }
 
-    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-        // フォーム送信前にバリデーションを実行
-        if (!isValidUsr(usrId, classId)) {
-            event.preventDefault(); // バリデーションに失敗した場合、送信をブロック
-        }
-        // 動的にURLを設定する
-        const form = event.currentTarget;
-        form.action = `/write_my_seats?class_id=${classId}&usr_id=${usrId}&usr_name=${usrName}`;
+    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault(); // すぐに送信せず待機
+
+        // fetcherを使用してユーザーデータを確認
+        await fetcher.submit(null, { method: "get", action: `/api/student_dat?usr_id=${usrId}&class_id=${classId}` });
     }
+
+    useEffect(() => {
+        // fetcherのレスポンスをチェック
+        if (fetcher.data) {
+            console.log("Fetcher data:", fetcher.data);
+
+            // バリデーションが成功した場合のみフォーム送信
+            if (fetcher.data.isValid) {
+                console.log("バリデーション成功: ユーザーが存在します");
+                const form = document.querySelector("form") as HTMLFormElement;
+                form.action = `/write_my_seats?class_id=${classId}&usr_id=${usrId}&usr_name=${usrName}`;
+                form.submit(); // バリデーションに通った後で送信
+            } else {
+                console.log("バリデーション失敗: ユーザーが存在しません");
+            }
+        }
+    }, [fetcher.data]);
+
     return(
         <>
             <div className={styles.container} style={{height: "250px"}}>
@@ -48,7 +64,7 @@ export default function Index() {
                 <button type="submit" className={styles.loginbutton} style={{top: "75%"}} disabled={isInputted} onClick={clickedLogin}>確認</button>
             </div>
             {isInputted && (
-                <Form action='/write_my_seats' method="post" onSubmit={handleSubmit}>
+                <Form method="post" onSubmit={handleSubmit}>
                     <div className={`${styles.container_invisible}  ${isInputted ? styles.container_visible : ""}`} style={{height: "250px"}}>
                         <div className={styles.container_title}>user idとusernameを入力してください</div>
                         <input type="text" name="num" placeholder="id" defaultValue={usrId} onChange={(e) => setUsrId(parseInt(e.target.value))} className={styles.userinput} style={{left: "30%", width: "10%"}} />
