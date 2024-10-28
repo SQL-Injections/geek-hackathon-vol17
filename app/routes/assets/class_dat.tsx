@@ -1,11 +1,17 @@
 // 連想配列を定義
-let Classobj = {
-    "001": []
-  };
+let Classobj : {[key:string]:number[]}={
+    "1": [1,2,3]
+};
   
-export function isValidClass(id: number | undefined ){
+export function isValidClass(id: string){
     console.log(id);
-    return true
+    for (let key in Classobj) {
+        if (key == id) {
+            // ClassID is valid
+            return true;
+        }
+    }
+    return false
 }
 
 export function pushIdAndClass(id: number, seats: number){

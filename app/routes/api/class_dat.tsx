@@ -3,8 +3,8 @@ import { isValidClass, pushIdAndClass } from "../assets/class_dat"; // Assume th
 // Validate user
 export async function loader({ request }: any) {
     const url = new URL(request.url);
-    const classId = Number(url.searchParams.get("class_id"));
-    const usrId = Number(url.searchParams.get("usr_id"));
+    //　クラスIDString型にします
+    const classId = String(url.searchParams.get("class_id"));
     const isValid = await isValidClass(classId);
     return json({ isValid });
 }
