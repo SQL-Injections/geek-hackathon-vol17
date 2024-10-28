@@ -15,13 +15,13 @@ export function isValidClass(id: string){
     return false
 }
 
-export function pushIdAndClass(id: number, seats: number){
+export function pushIdAndClass(id: string, seats:number[]){
     console.log(id);
     console.log(seats);
-    // let newObj = {
-    //     String(id): seats
-    // };
-    // Classobj = Object.assign({}, Classobj, newObj);
+    let newObj : {[key:string]:number[]}={
+        id: seats
+    };
+    Classobj = Object.assign({}, Classobj, newObj);
     // ここで連想配列作ってマージさせたい
     return true
 }
