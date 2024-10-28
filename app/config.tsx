@@ -1,2 +1,2 @@
-export const seatSize = '70px';
-export const seatMargin = '10px';
+export const seatSize = 70
+export const seatMargin = 10

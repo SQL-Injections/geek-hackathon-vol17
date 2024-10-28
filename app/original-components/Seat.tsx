@@ -13,6 +13,7 @@ const Seat: React.FC<SeatPropsType> = ({ text, isReserved, isDisabled }) => {
     <Box
       className='content-center text-center rounded'
       backgroundColor={isReserved ? 'red' : 'green'}
+      opacity={isDisabled ? 0.5 : 1}
       width={seatSize}
       height={seatSize}
     >
