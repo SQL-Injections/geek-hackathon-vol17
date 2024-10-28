@@ -1,6 +1,9 @@
 const adminDat : {[key: string]: {"password": string, "classes": Set<string>}} = {}
 
-export function isValidUsr(usrId: string, password: string) {
+export function isValidUsr(usrId: string| undefined, password: string| undefined) {
+    if (!usrId || !password) {
+        return false
+    }
     // ユーザがいなければ
     if (!adminDat[usrId]) {
         return false
@@ -9,7 +12,10 @@ export function isValidUsr(usrId: string, password: string) {
     return (adminDat[usrId]["password"] === password) 
 }
 
-export function pushUsr(usrId: string, password: string) {
+export function pushUsr(usrId: string| undefined, password: string| undefined) {
+    if (!usrId || !password) {
+        return false
+    }
     // 既にユーザ名が存在する場合はfalseを返す
     if (adminDat[usrId]) {
         return false
@@ -20,7 +26,10 @@ export function pushUsr(usrId: string, password: string) {
     return true
 }
 
-export function addClass(usrId: string, password: string, classId: string) {
+export function addClass(usrId: string| undefined, password: string| undefined, classId: string| undefined) {
+    if (!usrId || !password || !classId) {
+        return false
+    }
     //ユーザが存在しないならエラー
     if (!adminDat[usrId]) {
         return false
