@@ -15,5 +15,5 @@ export async function action({ request }: any) {
     const usrId = Number(formData.get("usr_id"));
     const classId = formData.get("class_id")?.toString();
 
-    await pushUsr(usrId, classId);
+    return await pushUsr(usrId, classId);
 }
