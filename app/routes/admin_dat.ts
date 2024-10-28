@@ -1,5 +1,5 @@
 import { json } from "@remix-run/node";
-import { isValidUsr, pushUsr, addClass } from "./assets/teacher_dat";
+import { isValidUsr, pushUsr, addClass } from "./assets/admin_dat";
 
 export async function loader({ request }: any) {
     const url = new URL(request.url);
@@ -7,10 +7,8 @@ export async function loader({ request }: any) {
     //いったんハッシュ化もソルトも存在しない状態で使うものとする
     const password = url.searchParams.get("password");
     const func = url.searchParams.get("function");
+    return json({item:false});
 
-    if (func === "isValidUsr") {
-        return json({ isValid: await isValidUsr(usrId, password) });
-    }
 }
 
 export async function action({ request }: any) {
@@ -25,6 +23,9 @@ export async function action({ request }: any) {
     }
     if (func === "addClass") {
         return json({ addClass: await addClass(usrId, password, classId) });
+    }
+    if (func === "isValidUsr") {
+        return json({ isValid: await isValidUsr(usrId, password) });
     }
     return json({ item: false });
 }
