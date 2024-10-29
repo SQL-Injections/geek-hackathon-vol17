@@ -117,9 +117,12 @@ export default function Index() {
                 // </Form>
             )}
             <div className={styles.seats_container} style={{ display: isConfirmed ? 'block' : 'none' }}>
-                <Box className={`mx-auto ${styles.seats_boxes}`}>
-                    <SeatArrangement row={height} col={width} />
-                </Box>
+                <div className={styles.seats_amount_text}>使用しない座席をクリックで選択してください</div>
+                <div className={styles.seats}>
+                    <Box className={`mx-auto ${styles.seats_boxes}`}>
+                        <SeatArrangement row={height} col={width} />
+                    </Box>
+                </div>
             </div>
         </>
     )

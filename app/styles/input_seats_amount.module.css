@@ -156,14 +156,28 @@
 
 .seats_boxes {
     position: relative;      /* 親要素に相対的な位置に変更 */
-    max-width: 95%;
-    max-height: 550px;
+    max-width: 100%;
+    max-height: 95vh;
     overflow: auto;
-    top: 1%;
-    left: 1%;
-    display: flex;           /* 子要素が横並びに */
-    flex-wrap: wrap;         /* 子要素が折り返すように */
-    justify-content: center; /* 子要素を中央に配置 */
+}
+
+.seats{
+    position: relative;
+    max-width: 80%;
+    min-width: 300px;
+    max-height: 100vh;
+    font-size: 16px;
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    width: fit-content;      /* 内容に応じて幅を調整 */
+    left:50%;
+    transform: translate(-50%, 0%);
+}
+
+.seats_amount_text{
+    position: relative;
+    margin-top: 40px;
 }
 
 .seats_container {
@@ -173,7 +187,7 @@
     position: relative;
     max-width: 80%;
     min-width: 300px;
-    max-height: 600px;
+    max-height: 110vh;
     color: #000;
     padding: 5px;
     font-size: 16px;
