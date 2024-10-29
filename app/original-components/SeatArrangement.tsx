@@ -4,10 +4,10 @@ import { Box, Grid } from '@chakra-ui/react'
 import { seatMargin, seatSize } from 'app/config'
 import { useInteractJS } from '~/utils/hooks'
 
-const SeatArrangement = () => {
-  const [rowCount, setRowCount] = useState(5) // 行数の状態
-  const [columnCount, setColumnCount] = useState(7) // 列数の状態
-  const totalSeats = rowCount * columnCount - 2
+const SeatArrangement = ({row, col} : {row: number, col: number}) => {
+  const [rowCount, setRowCount] = useState(row) // 行数の状態
+  const [columnCount, setColumnCount] = useState(col) // 列数の状態
+  const totalSeats = rowCount * columnCount
   const containerRef = useRef<HTMLDivElement>(null)
   const [cellWidth, setCellWidth] = useState(0)
   const [disableSeats, setDisableSeats] = useState(
@@ -15,6 +15,12 @@ const SeatArrangement = () => {
       return false
     }),
   )
+
+  useEffect(() => {
+    setRowCount(row);
+    setColumnCount(col);
+    setDisableSeats(Array(row * col).fill(false)); // ディセーブル状態も更新
+  }, [row, col]);
 
   const seatPositions = useMemo(() => {
     return Array.from({ length: totalSeats }, (_, index) => {

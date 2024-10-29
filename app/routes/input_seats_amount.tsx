@@ -77,9 +77,9 @@ export default function Index() {
         </button>
       </div>
       {isInputted && (
-        <Form action='/set_seats_position' method='post' onSubmit={handleSubmit}>
+        // <Form action='/set_seats_position' method='post' onSubmit={handleSubmit}>
           <div className={`${styles.wh_length_container} ${isInputted ? styles.wh_length_container_visible : ''}`}>
-            <div className={styles.seats_amount_text}>教室の縦横幅を入力してください</div>
+            <div className={styles.seats_amount_text}>縦横幅を入力してください</div>
             <div className={styles.wh_err_msg}>{errMsg}</div>
             <div className={styles.wh_length_text} style={{ top: '45%' }}>
               縦
@@ -111,10 +111,10 @@ export default function Index() {
               確定
             </button>
           </div>
-        </Form>
+        // </Form>
       )}
       <Box className='mx-auto'>
-        <SeatArrangement />
+        <SeatArrangement key={`${height}-${width}`} row={height} col={width} />
       </Box>
     </>
   )
