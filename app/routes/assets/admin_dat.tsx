@@ -1,6 +1,6 @@
-const adminDat : {[key: string]: {"password": string, "classes": Set<string>}} = {}
+export const adminDat: { [key: string]: { password: string; classes: Set<string> } } = {}
 
-export function isValidUsr(usrId: string| undefined, password: string| undefined) {
+export function isValidUsr(usrId: string | undefined, password: string | undefined) {
     if (!usrId || !password) {
         return false
     }
@@ -9,10 +9,11 @@ export function isValidUsr(usrId: string| undefined, password: string| undefined
         return false
     }
     //パスワードが一致するなら
-    return (adminDat[usrId]["password"] === password) 
+    return adminDat[usrId]['password'] === password
 }
 
-export function pushUsr(usrId: string| undefined, password: string| undefined) {
+// createUser
+export function pushUsr(usrId: string | undefined, password: string | undefined) {
     if (!usrId || !password) {
         return false
     }
@@ -22,11 +23,12 @@ export function pushUsr(usrId: string| undefined, password: string| undefined) {
     }
 
     // データ生成
-    adminDat[usrId] = {"password": password, "classes": new Set()}
+    adminDat[usrId] = { password: password, classes: new Set() }
     return true
 }
 
-export function addClass(usrId: string| undefined, password: string| undefined, classId: string| undefined) {
+// createClass
+export function addClass(usrId: string | undefined, password: string | undefined, classId: string | undefined) {
     if (!usrId || !password || !classId) {
         return false
     }
@@ -34,7 +36,16 @@ export function addClass(usrId: string| undefined, password: string| undefined, 
     if (!adminDat[usrId]) {
         return false
     }
+
+    // TODO
+    // クラス名が被っている場合にエラー出力
+
     // データ生成
-    adminDat[usrId]["classes"].add(classId)
+    adminDat[usrId]['classes'].add(classId)
     return true
+}
+
+// 仮置き
+export const getClassList = (classAdmin: string) => {
+    return Array.from(adminDat[classAdmin].classes) || []
 }

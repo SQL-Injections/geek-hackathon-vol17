@@ -1,26 +1,23 @@
+const studentDat: { [key: string]: Set<number> } = {}
 
-const studentDat : { [key: string]: Set<number> } = {}
-
-export async function isValidUsr(id: number | undefined, classid: string | undefined){
+export async function isValidUsr(id: number | undefined, classid: string | undefined) {
     console.log(id, classid)
     if (!id || !classid) {
         return false
-    }
-    else{
+    } else {
         if (!studentDat[classid]) {
             return false
-        }
-        else{
+        } else {
             return studentDat[classid].has(id)
         }
     }
 }
 
-export async function pushUsr(id: number | undefined, classid: string | undefined){
+// createStudent
+export async function pushUsr(id: number | undefined, classid: string | undefined) {
     if (!id || !classid) {
         return false
-    }
-    else{
+    } else {
         // クラスidが存在していないならクラスを生成する
         if (!studentDat[classid]) {
             studentDat[classid] = new Set()
@@ -30,4 +27,3 @@ export async function pushUsr(id: number | undefined, classid: string | undefine
         return true
     }
 }
-
