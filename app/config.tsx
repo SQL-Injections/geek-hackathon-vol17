@@ -1,2 +1,2 @@
-export const seatSize = 70
-export const seatMargin = 10
+export const seatSize = 50
+export const seatMargin = 5
