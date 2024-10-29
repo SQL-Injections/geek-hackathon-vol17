@@ -1,9 +1,4 @@
-export const adminDat: { [key: string]: { password: string; classes: Set<string> } } = {
-    admin: {
-        password: 'password',
-        classes: new Set(['2-1', '3-1', '情報１年']),
-    },
-}
+export const adminDat: { [key: string]: { password: string; classes: Set<string> } } = {}
 
 export function isValidUsr(usrId: string | undefined, password: string | undefined) {
     if (!usrId || !password) {
