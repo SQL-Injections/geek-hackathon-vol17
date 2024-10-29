@@ -116,9 +116,9 @@ export default function Index() {
                 </div>
                 // </Form>
             )}
-            <div className={styles.seats_container}>
+            <div className={styles.seats_container} style={{ display: isConfirmed ? 'block' : 'none' }}>
                 <Box className={`mx-auto ${styles.seats_boxes}`}>
-                    <SeatArrangement row={height} col={width} isConfirmed={isConfirmed} />
+                    <SeatArrangement row={height} col={width} />
                 </Box>
             </div>
         </>
