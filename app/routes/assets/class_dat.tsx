@@ -4,9 +4,9 @@ let Classobj : {[key:string]:number[]}={
     // "ClassID": "座席のデータ"
 };
   
-export function isValidClass(id: string){
+export function isToClassSeats(id: string){
     console.log(id);
-    return Boolean(Classobj[id]);
+    return Classobj[id];
 }
 
 export function pushIdAndClass(id: string, seats:number[]){
