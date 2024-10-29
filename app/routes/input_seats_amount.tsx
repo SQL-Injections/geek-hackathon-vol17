@@ -1,7 +1,8 @@
 import { Box } from '@chakra-ui/react'
 import type { MetaFunction, LoaderFunctionArgs } from '@remix-run/node'
 import { redirect } from '@remix-run/node'
-import { useLoaderData, Form } from '@remix-run/react'
+import { useLoaderData, Form, useFetcher } from '@remix-run/react'
+import { create } from 'framer-motion/client'
 import { useState } from 'react'
 import { SeatArrangement } from '~/original-components'
 import Seat from '~/original-components/Seat'
@@ -19,6 +20,8 @@ export default function Index() {
     const [width, setWidth] = useState<number>(0)
     const [errMsg, setErrMsg] = useState('')
     const [isConfirmed, setIsConfirmed] = useState(false)
+    const [SeatsArray, setSeatsArray] = useState<number[]>([])
+    const fetcher = useFetcher()
 
     function clickedSeatsAmount() {
         // 一応確認
@@ -56,6 +59,19 @@ export default function Index() {
         // 動的にURLを設定する
         const form = event.currentTarget
         form.action = `/set_seats_position?height=${height}&width=${width}&seats_amount=${seatsAmount}`
+    }
+
+    const handleValueChange =  (newValue: number[]) => {
+        setSeatsArray(newValue)
+    }
+
+
+    function createClass(){
+        //クラス情報を追加する
+        //とりあえずidをランダム生成
+        const id = Math.floor(Math.random() * 10000000)
+        //クラスを作成する
+        fetcher.submit({class_id: String(id), seats_amount: SeatsArray}, { method: "post", action: `/class_dat` })
     }
 
     return (
@@ -120,9 +136,13 @@ export default function Index() {
                 <div className={styles.seats_amount_text}>使用しない座席をクリックで選択してください</div>
                 <div className={styles.seats}>
                     <Box className={`mx-auto ${styles.seats_boxes}`}>
-                        <SeatArrangement row={height} col={width} />
+                        <SeatArrangement row={height} col={width} handleValueChange={handleValueChange} />
                     </Box>
                 </div>
+                
+                <Form action='/set_seats_position' method='post' onSubmit={createClass}>
+                    <button type='submit' className={styles.seats_submit_button}>クラスを生成する</button>
+                </Form>
             </div>
         </>
     )

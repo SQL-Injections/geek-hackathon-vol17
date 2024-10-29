@@ -4,7 +4,7 @@ import { Box, Grid } from '@chakra-ui/react'
 import { seatMargin, seatSize } from 'app/config'
 import { useInteractJS } from '~/utils/hooks'
 
-const SeatArrangement = ({ row, col}: { row: number, col: number}) => {
+const SeatArrangement = ({ row, col, handleValueChange }: { row: number, col: number, handleValueChange: (value: number[]) => void }) => {
     const [rowCount, setRowCount] = useState(row) // 行数の状態
     const [columnCount, setColumnCount] = useState(col) // 列数の状態
     const totalSeats = rowCount * columnCount
@@ -16,10 +16,19 @@ const SeatArrangement = ({ row, col}: { row: number, col: number}) => {
         }),
     )
 
+    console.log(handleValueChange)
+
+    function handleInputChange( array : Array<any>) {
+        const value = array;
+        handleValueChange(value);
+    }
+
     useEffect(() => {
         setRowCount(row);
         setColumnCount(col);
         setDisableSeats(Array(row * col).fill(false)); // ディセーブル状態も更新
+        handleInputChange(disableSeats);
+        console.log(disableSeats);
     }, [row, col]);
 
     const seatPositions = useMemo(() => {
