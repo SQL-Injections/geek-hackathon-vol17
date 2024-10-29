@@ -13,7 +13,6 @@ export const meta: MetaFunction = () => {
 };
 
 
-
 export default function Index() {
     //clientでやってほしいので
     const [seatsAmount, setSeatsAmount] = useState(1); 
