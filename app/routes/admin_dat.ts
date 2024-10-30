@@ -6,11 +6,7 @@ export async function loader({ request }: any) {
     const usrId = url.searchParams.get("usr_id")?.toString();
     //いったんハッシュ化もソルトも存在しない状態で使うものとする
     const password = url.searchParams.get("password")?.toString();
-    const func = url.searchParams.get("function");
     
-    if (func === "isValidUsr") {
-        return json({ isValid: await isValidUsr(usrId, password) });
-    }
     return json({item:false});
 
 }
