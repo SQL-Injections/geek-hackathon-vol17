@@ -51,15 +51,15 @@ export default function Index() {
         return true
     }
 
-    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-        // フォーム送信前にバリデーションを実行
-        if (!validateInputs()) {
-            event.preventDefault() // バリデーションに失敗した場合、送信をブロック
-        }
-        // 動的にURLを設定する
-        const form = event.currentTarget
-        form.action = `/management_classes`
-    }
+    // function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    //     // フォーム送信前にバリデーションを実行
+    //     if (!validateInputs()) {
+    //         event.preventDefault() // バリデーションに失敗した場合、送信をブロック
+    //     }
+    //     // 動的にURLを設定する
+    //     const form = event.currentTarget
+    //     form.action = `/management_classes`
+    // }
 
     const handleValueChange =  (newValue: Array<Array<number|boolean>>) => {
         console.log("newValue:",newValue)
@@ -67,14 +67,27 @@ export default function Index() {
     }
 
 
-    function createClass(){
+    function createClass(event: React.FormEvent<HTMLFormElement>) {
         //クラス情報を追加する
         //とりあえずidをランダム生成
         const id = Math.floor(Math.random() * 10000000)
         console.log("Seats:",SeatsArray)
         console.log("id:",id)
-        //クラスを作成する
-        fetcher.submit({classId: String(id), classInfo: JSON.stringify(SeatsArray)}, { method: "post", action: `/class_dat`, encType: "application/json" });
+        // SeatsArrayの有効座席がSeatsAmount個なら
+        if (SeatsArray.flat().filter((seat) => seat).length === seatsAmount) {
+            console.log("クラス作成")
+            //クラスを作成する
+            fetcher.submit({classId: String(id), classInfo: JSON.stringify(SeatsArray)}, { method: "post", action: `/class_dat`, encType: "application/json" });
+            //formに飛ぶ
+            event.currentTarget.action = `/management_classes`;
+        }
+        else {
+            console.log("有効な座席を入力してください")
+            // とりあえず
+            alert(`選択した席数${seatsAmount}に対して現在選択中の席数は${SeatsArray.flat().filter((seat) => seat).length}個です。`)
+            // キャンセル
+            event.preventDefault()
+        }
     }
 
     return (
