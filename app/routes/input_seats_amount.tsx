@@ -20,7 +20,7 @@ export default function Index() {
     const [width, setWidth] = useState<number>(0)
     const [errMsg, setErrMsg] = useState('')
     const [isConfirmed, setIsConfirmed] = useState(false)
-    const [SeatsArray, setSeatsArray] = useState<Array<Array<number>>>([])
+    const [SeatsArray, setSeatsArray] = useState<Array<Array<number|boolean>>>([])
     const fetcher = useFetcher()
 
     function clickedSeatsAmount() {
@@ -61,7 +61,7 @@ export default function Index() {
         form.action = `/set_seats_position?height=${height}&width=${width}&seats_amount=${seatsAmount}`
     }
 
-    const handleValueChange =  (newValue: Array<Array<number>>) => {
+    const handleValueChange =  (newValue: Array<Array<number|boolean>>) => {
         console.log("newValue:",newValue)
         setSeatsArray(newValue)
     }
