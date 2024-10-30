@@ -4,7 +4,7 @@ import { Box, Grid } from '@chakra-ui/react'
 import { seatMargin, seatSize } from 'app/config'
 import { useInteractJS } from '~/utils/hooks'
 
-const SeatArrangement = ({ row, col, handleValueChange }: { row: number, col: number, handleValueChange: (value: number[]) => void }) => {
+const SeatArrangement = ({ row, col, handleValueChange }: { row: number, col: number, handleValueChange: (value: Array<Array<number>>) => void }) => {
     const [rowCount, setRowCount] = useState(row) // 行数の状態
     const [columnCount, setColumnCount] = useState(col) // 列数の状態
     const totalSeats = rowCount * columnCount
@@ -16,20 +16,28 @@ const SeatArrangement = ({ row, col, handleValueChange }: { row: number, col: nu
         }),
     )
 
-    console.log(handleValueChange)
 
     function handleInputChange( array : Array<any>) {
         const value = array;
-        handleValueChange(value);
+        //これ毎回処理させるのすごくあれだけど
+        const send: Array<Array<number>> = [];
+        console.log(columnCount)
+        // 2次元配列に変換
+        for (let i = 0; i < value.length / columnCount; i++) {
+            send.push(value.slice(i * columnCount,(i + 1) * (columnCount)));
+        }
+        handleValueChange(send);
     }
 
     useEffect(() => {
         setRowCount(row);
         setColumnCount(col);
         setDisableSeats(Array(row * col).fill(false)); // ディセーブル状態も更新
-        handleInputChange(disableSeats);
-        console.log(disableSeats);
     }, [row, col]);
+
+    useEffect(() => {
+        handleInputChange(disableSeats)
+    }, [disableSeats])
 
     const seatPositions = useMemo(() => {
         return Array.from({ length: totalSeats }, (_, index) => {

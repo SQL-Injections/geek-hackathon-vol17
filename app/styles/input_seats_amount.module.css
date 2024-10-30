@@ -159,12 +159,13 @@
     max-width: 100%;
     max-height: 95vh;
     overflow: auto;
+    /*中央に配置*/
 }
 
 .seats{
     position: relative;
     max-width: 80%;
-    min-width: 300px;
+    min-width: 0px;
     max-height: 100vh;
     font-size: 16px;
     text-align: center;

@@ -20,7 +20,7 @@ export default function Index() {
     const [width, setWidth] = useState<number>(0)
     const [errMsg, setErrMsg] = useState('')
     const [isConfirmed, setIsConfirmed] = useState(false)
-    const [SeatsArray, setSeatsArray] = useState<number[]>([])
+    const [SeatsArray, setSeatsArray] = useState<Array<Array<number>>>([])
     const fetcher = useFetcher()
 
     function clickedSeatsAmount() {
@@ -61,7 +61,8 @@ export default function Index() {
         form.action = `/set_seats_position?height=${height}&width=${width}&seats_amount=${seatsAmount}`
     }
 
-    const handleValueChange =  (newValue: number[]) => {
+    const handleValueChange =  (newValue: Array<Array<number>>) => {
+        console.log("newValue:",newValue)
         setSeatsArray(newValue)
     }
 
@@ -70,6 +71,7 @@ export default function Index() {
         //クラス情報を追加する
         //とりあえずidをランダム生成
         const id = Math.floor(Math.random() * 10000000)
+        console.log("Seats:",SeatsArray)
         //クラスを作成する
         fetcher.submit({class_id: String(id), seats_amount: SeatsArray}, { method: "post", action: `/class_dat` })
     }
