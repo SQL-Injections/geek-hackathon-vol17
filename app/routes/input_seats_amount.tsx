@@ -58,7 +58,7 @@ export default function Index() {
         }
         // 動的にURLを設定する
         const form = event.currentTarget
-        form.action = `/set_seats_position?height=${height}&width=${width}&seats_amount=${seatsAmount}`
+        form.action = `/management_classes`
     }
 
     const handleValueChange =  (newValue: Array<Array<number|boolean>>) => {
@@ -72,8 +72,9 @@ export default function Index() {
         //とりあえずidをランダム生成
         const id = Math.floor(Math.random() * 10000000)
         console.log("Seats:",SeatsArray)
+        console.log("id:",id)
         //クラスを作成する
-        fetcher.submit({class_id: String(id), seats_amount: SeatsArray}, { method: "post", action: `/class_dat` })
+        fetcher.submit({classId: String(id), classInfo: JSON.stringify(SeatsArray)}, { method: "post", action: `/class_dat`, encType: "application/json" });
     }
 
     return (
@@ -96,7 +97,6 @@ export default function Index() {
                 </button>
             </div>
             {isInputted && (
-                // <Form action='/set_seats_position' method='post' onSubmit={handleSubmit}>
                 <div className={`${styles.wh_length_container} ${isInputted ? styles.wh_length_container_visible : ''}`}>
                     <div className={styles.seats_amount_text}>縦横幅を入力してください</div>
                     <div className={styles.wh_err_msg}>{errMsg}</div>
@@ -132,7 +132,6 @@ export default function Index() {
                         確定
                     </button>
                 </div>
-                // </Form>
             )}
             <div className={styles.seats_container} style={{ display: isConfirmed ? 'block' : 'none' }}>
                 <div className={styles.seats_amount_text}>使用しない座席をクリックで選択してください</div>
@@ -142,7 +141,7 @@ export default function Index() {
                     </Box>
                 </div>
                 
-                <Form action='/set_seats_position' method='post' onSubmit={createClass}>
+                <Form action='/management_classes' method='post' onSubmit={createClass}>
                     <button type='submit' className={styles.seats_submit_button}>クラスを生成する</button>
                 </Form>
             </div>
