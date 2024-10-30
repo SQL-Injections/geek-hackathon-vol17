@@ -15,7 +15,7 @@ export const meta: MetaFunction = () => {
 export default function Index() {
     const [usrId, setUsrId] = useState<number>();
     const [usrName, setUsrName] = useState("");
-    const [classId, setClassId] = useState<number>();
+    const [classId, setClassId] = useState<string>();
     const [isInputted, setIsInputted] = useState(false);
     const fetcher = useFetcher();
     

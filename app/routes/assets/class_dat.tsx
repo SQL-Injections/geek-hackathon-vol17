@@ -5,14 +5,17 @@ let Classobj : {[key:string]:Array<Array<number>>}={
     // "ClassID": "座席のデータ"
 };
   
-export function isToClassSeats(id: string){
+export function idToClassSeats(id: string | undefined){
     // Classobj[id].forEach(function( value ) {
     //     console.log(value);
     // });
-    return Classobj[id];
+    if (id != undefined) {
+        return Classobj[id];
+    }
+    else return 0;
 }
 
-export function pushIdAndClass(id: string, seats:Array<Array<number>>){
+export function pushIdAndSeats(id: string, seats:Array<Array<number>>){
     console.log("id = "+id);
     // console.log(seats);
     Classobj[id]=seats;
