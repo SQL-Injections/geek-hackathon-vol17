@@ -25,6 +25,10 @@ const SeatArrangement = ({ row, col, handleValueChange }: { row: number, col: nu
         // 2次元配列に変換
         for (let i = 0; i < value.length / columnCount; i++) {
             send.push(value.slice(i * columnCount,(i + 1) * (columnCount)));
+            // 全てt/fをf/tに
+            for (let j = 0; j < send[i].length; j++) {
+                send[i][j] = Boolean(1 - Number(send[i][j]));
+            }
         }
         handleValueChange(send);
     }
