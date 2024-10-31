@@ -4,7 +4,8 @@ import { Box, Grid } from '@chakra-ui/react'
 import { seatMargin, seatSize } from 'app/config'
 import { useFetcher } from '@remix-run/react'
 
-const SelectableSeatSet = ({ usrId, classId, defaultseats } : { usrId: string, classId: string, defaultseats: Array<Array<boolean|Set<string>>> }) => {
+
+const SelectableSeatSet = ({ usrId, classId, defaultseats } : { usrId: string, classId: string, defaultseats: Array<Array<boolean|Array<string>>> }) => {
     const containerRef = useRef<HTMLDivElement>(null)
     // 1次元に変換する
     const totalSeats = defaultseats.length * defaultseats[0].length
@@ -26,7 +27,7 @@ const SelectableSeatSet = ({ usrId, classId, defaultseats } : { usrId: string, c
     useEffect(() => {
         // fetcherのレスポンスをチェック
         if (fetcher.data) {
-            setEnableSeats((fetcher.data as Array<Array<boolean|Set<string>>>).flat(1));
+            setEnableSeats((fetcher.data as Array<Array<boolean|Array<string>>>).flat(1));
         }
     }, [fetcher.data])
 
