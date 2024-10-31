@@ -1,6 +1,6 @@
 
 // 連想配列を定義
-let Classobj : {[key:string]:Array<Array<boolean|Set<string>>>}={
+let Classobj : {[key:string]:Array<Array<boolean|Array<string>>>}={
     "1": [[true,true,false],[false,true,true],[true,false,true]]
     // "ClassID": "座席のデータ"
 };
@@ -51,15 +51,21 @@ export function modifyClass(classId: string, usrId: string, x: number, y: number
             if (typeof(Classobj[classId][i][j]) === "boolean") {
                 continue
             }
-            if (Classobj[classId][i][j] instanceof Set) {
-                const set = Classobj[classId][i][j] as Set<string>
+            if (Classobj[classId][i][j] instanceof Array) {
+                const set = Classobj[classId][i][j] as Array<string>
                 // もしsetにusrIdが存在するなら削除する
-                if (set.has(usrId)) {
-                    set.delete(usrId)
+                if (set.includes(usrId)) {
+                    //usrIdを削除
+                    for (let k = 0; k < set.length; k++) {
+                        if (set[k] === usrId) {
+                            set.splice(k, 1)
+                            break
+                        }
+                    }
                     Classobj[classId][i][j] = set
                 }
                 // 削除した結果その場所を選択している人がいないなら書き換え(別にset([])のままでも動きはする)
-                if (set.size === 0) {
+                if (set.length === 0) {
                     Classobj[classId][i][j] = true
                 }
             }
@@ -67,7 +73,7 @@ export function modifyClass(classId: string, usrId: string, x: number, y: number
     }
     // その場所がまだ選択されていないなら
     if (Classobj[classId][y][x] === true) {
-        Classobj[classId][y][x] = new Set([usrId])
+        Classobj[classId][y][x] = [usrId]
     }
     // もう誰かに選択されているなら
     else if (Classobj[classId][y][x] instanceof Set) {
