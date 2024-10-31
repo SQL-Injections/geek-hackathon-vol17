@@ -1,5 +1,5 @@
 import { json } from "@remix-run/node";
-import { isToClassSeats, pushIdAndClass } from "./assets/class_dat"; // Assume these are your server-side utility functions
+import { isToClassSeats, pushIdAndClass, modifyClass } from "./assets/class_dat"; // Assume these are your server-side utility functions
 // Validate class
 export async function loader({ request }: any) {
     const url = new URL(request.url);
@@ -15,6 +15,15 @@ export async function action({ request }: any) {
     const formData = await request.json();
     // console.log(formData);
     const classId = String(formData.classId);
+    // Todo : この辺りの処理はidとパスワードを求めるべき
+    const func = String(formData.function);
+
+    if (func === "modifyClass") {
+        const x = Number(formData.x);
+        const y = Number(formData.y);
+        const usrId = String(formData.usrId);
+        return await modifyClass(classId, usrId, x, y);
+    }
     // console.log(classId);
     const classInfo = JSON.parse(formData.classInfo);
     // console.log(classInfo[0]);
