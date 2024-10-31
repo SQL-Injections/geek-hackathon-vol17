@@ -1,14 +1,11 @@
 import { Box } from '@chakra-ui/react'
 import { json } from '@remix-run/node'
 import type { MetaFunction, LoaderFunctionArgs } from '@remix-run/node'
-import { redirect } from '@remix-run/node'
 import { useLoaderData, Form } from '@remix-run/react'
-import { useState } from 'react'
-import { SeatArrangement } from '~/original-components'
-import Seat from '~/original-components/Seat'
-import styles from '~/styles/input_seats_amount.module.css'
+import styles from '~/styles/write_my_seats.module.css'
 import SelectableSeatSet from '~/original-components/SelectableSeatSet'
 import { isToClassSeats } from './assets/class_dat'
+
 
 export const meta: MetaFunction = () => {
     return [{ title: 'New Remix App' }, { name: 'description', content: 'Welcome to Remix!' }]
@@ -19,6 +16,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const usrId = url.searchParams.get('usr_id')?.toString() as string
     const classId = url.searchParams.get('class_id')?.toString() as string
     const seatsDat = await isToClassSeats(classId)
+    console.log("seatsDat", seatsDat);
     return json({ usrId, classId, seatsDat })
 }
 
@@ -28,9 +26,13 @@ export default function Index() {
 
     return (
         <>
-            <Box className='mx-auto'>
-                <SelectableSeatSet usrId={query.usrId} classId={query.classId} defaultseats={query.seatsDat}  />
-            </Box>
+            <div className={styles.seats_container}>
+                <div className={styles.seats}>
+                    <Box className={`mx-auto ${styles.seats_boxes}`}>
+                        <SelectableSeatSet usrId={query.usrId} classId={query.classId} defaultseats={query.seatsDat}  />
+                    </Box>
+                </div>
+            </div>
         </>
     )
 }
