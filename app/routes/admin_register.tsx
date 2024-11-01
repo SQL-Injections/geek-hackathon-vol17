@@ -2,7 +2,6 @@
 import type { MetaFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { Form, useFetcher } from "@remix-run/react";
 import styles from "~/styles/admin_login.module.css";
-import { idToClassSeats, pushIdAndSeats} from "~/routes/assets/class_dat";
 
 import { useState, useEffect } from "react";
 import { style } from "framer-motion/client";
