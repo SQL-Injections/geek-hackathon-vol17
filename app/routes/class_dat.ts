@@ -1,5 +1,6 @@
 import { json } from "@remix-run/node";
 import { isToClassSeats, pushIdAndClass, modifyClass } from "./assets/class_dat"; // Assume these are your server-side utility functions
+import { requireUserSession } from "./assets/student_auth.server";
 // Validate class
 export async function loader({ request }: any) {
     const url = new URL(request.url);
@@ -10,8 +11,13 @@ export async function loader({ request }: any) {
     return json({ isValid });
 }
 
+
 // Add Class
 export async function action({ request }: any) {
+    const query = await requireUserSession(request);
+    if (!query){
+        return json({ notFoundSession: false });
+    }
     const formData = await request.json();
     // console.log(formData);
     const classId = String(formData.classId);

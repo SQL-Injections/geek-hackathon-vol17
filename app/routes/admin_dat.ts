@@ -1,5 +1,6 @@
 import { json } from "@remix-run/node";
 import { isValidUsr, pushUsr, addClass } from "./assets/admin_dat";
+import { requireUserSession } from "./assets/student_auth.server";
 
 export async function loader({ request }: any) {
     const url = new URL(request.url);
@@ -16,6 +17,10 @@ export async function loader({ request }: any) {
 }
 
 export async function action({ request }: any) {
+    const query = await requireUserSession(request);
+    if (!query){
+        return json({ notFoundSession: false });
+    }
     const formData = await request.formData();
     const usrId = formData.get("usr_id")?.toString();
     const classId = formData.get("class_id")?.toString();
