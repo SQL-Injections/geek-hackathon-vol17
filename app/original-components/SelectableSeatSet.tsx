@@ -40,7 +40,7 @@ const SelectableSeatSet = ({ usrId, classId, defaultseats } : { usrId: string, c
                             //その場所を誰が選択しているかを返す
                             key={ index }
                             margin={seatMargin}
-                            onClick={() => modifySeats(index)}
+                            onClick={() => enableSeats[index] ? modifySeats(index) : null}
                         >
                             <Seat text={typeof(enableSeats[index]) == "boolean" ? "" : Array.from(enableSeats[index]).join(",")} isDisabled={!enableSeats[index]} />
                         </Box>
