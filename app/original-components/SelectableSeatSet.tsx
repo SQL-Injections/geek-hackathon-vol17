@@ -6,6 +6,7 @@ import { useFetcher } from '@remix-run/react'
 
 
 const SelectableSeatSet = ({ usrId, classId, usrName, defaultseats } : { usrId: string, classId: string, usrName: string, defaultseats: Array<Array<boolean|Array<{"usr_id": string, "usr_name": string}>>> }) => {
+    console.log("component-a", defaultseats)
     const containerRef = useRef<HTMLDivElement>(null)
     // 1次元に変換する
     const totalSeats = defaultseats.length * defaultseats[0].length
