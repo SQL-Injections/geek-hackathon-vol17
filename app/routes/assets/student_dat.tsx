@@ -1,6 +1,6 @@
-const studentDat: { [key: string]: Set<number> } = {}
+const studentDat: { [key: string]: Set<string> } = {}
 
-export async function isValidUsr(id: number | undefined, classid: string | undefined) {
+export async function isValidUsr(id: string | undefined, classid: string | undefined) {
     console.log(id, classid)
     if (!id || !classid) {
         return false
@@ -14,7 +14,7 @@ export async function isValidUsr(id: number | undefined, classid: string | undef
 }
 
 // createStudent
-export async function pushUsr(id: number | undefined, classid: string | undefined) {
+export async function pushUsr(id: string | undefined, classid: string | undefined) {
     if (!id || !classid) {
         return false
     } else {
