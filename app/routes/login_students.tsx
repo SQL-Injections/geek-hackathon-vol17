@@ -1,9 +1,10 @@
 import type { MetaFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { Form, useFetcher } from "@remix-run/react";
 import styles from "~/styles/login_students.module.css";
-import { idToClassSeats, pushIdAndSeats} from "~/routes/assets/class_dat";
+import { isToClassSeats } from "~/routes/assets/class_dat";
 import { isValidUsr, pushUsr } from "./assets/student_dat";
 import { useState, useEffect } from "react";
+import { login } from "./assets/student_login";
 
 export const meta: MetaFunction = () => {
     return [
@@ -12,18 +13,35 @@ export const meta: MetaFunction = () => {
     ];
 };
 
+export async function action({ request }: any) {
+    const formData = await request.formData();
+    const credentials = {
+        usr_id: formData.get("usr_id")?.toString(),
+        class_id: formData.get("class_id")?.toString(),
+        usr_name: formData.get("usr_name")?.toString(),
+    };
+    try {
+        return await login(credentials);
+    } catch (error: any) {
+        if (error.status === 401) {
+            return { credentials: error.message };
+        }
+        if (error.status === 422) {
+            return { credentials: error.message };
+        }
+    }
+}
+
 export default function Index() {
     const [usrId, setUsrId] = useState<number>();
     const [usrName, setUsrName] = useState("");
-    const [classId, setClassId] = useState<string>();
+    const [classId, setClassId] = useState<string>("");
     const [isInputted, setIsInputted] = useState(false);
     const fetcher = useFetcher();
     
     function clickedLogin() {
-        // 一応確認
-        console.log(isInputted);
         // 二つ目のコンテナを表示する
-        if (idToClassSeats(classId)) {
+        if (isToClassSeats(classId)) {
             // もし、idが正しいなら
             // 二つ目のコンテナを表示する
             setIsInputted(true);
@@ -32,9 +50,6 @@ export default function Index() {
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault(); // すぐに送信せず待機
-
-        // fetcherを使用してユーザーデータを確認
-        await fetcher.submit(null, { method: "get", action: `/student_dat?usr_id=${usrId}&class_id=${classId}` });
     }
 
     useEffect(() => {
@@ -56,22 +71,25 @@ export default function Index() {
 
     return(
         <>
-            <div className={styles.container} style={{height: "250px"}}>
-                <div className={styles.container_title}>class idを入力してください</div>
-                <input type="password" name="password" placeholder="class id" onChange={(e) => setClassId(parseInt(e.target.value))} className={styles.userinput} disabled={isInputted} style={{top: "47%"}} />
-                <button type="submit" className={styles.loginbutton} style={{top: "75%"}} disabled={isInputted} onClick={clickedLogin}>確認</button>
-            </div>
-            {isInputted && (
-                <Form method="post" onSubmit={handleSubmit}>
-                    <div className={`${styles.container_invisible}  ${isInputted ? styles.container_visible : ""}`} style={{height: "250px"}}>
-                        <div className={styles.container_title}>user idとusernameを入力してください</div>
-                        <input type="text" name="num" placeholder="id" defaultValue={usrId} onChange={(e) => setUsrId(parseInt(e.target.value))} className={styles.userinput} style={{left: "30%", width: "10%"}} />
-                        <input type="text" name="username" placeholder="表示名" onChange={(e) => setUsrName(e.target.value)} className={styles.userinput} style={{left: "56%", width: "38%"}} />
-                        <button type="submit" className={styles.loginbutton} style={{top: "75%"}}>ログイン</button>
-                    </div>
-                </Form>
-                )
-            }
+            <Form method="post">
+                <div className={styles.container} style={{height: "250px"}}>
+                    <div className={styles.container_title}>class idを入力してください</div>
+                    <input type="text" name="class_id" placeholder="class id" onChange={(e) => setClassId(e.target.value)} className={styles.userinput} disabled={isInputted} style={{top: "47%"}} />
+                    <button type="button" className={styles.loginbutton} style={{top: "75%"}} disabled={isInputted} onClick={clickedLogin}>確認</button>
+                </div>
+                {isInputted && (
+                    <>
+                        <input type="hidden" name="class_id" value={classId} />
+                        <div className={`${styles.container_invisible}  ${isInputted ? styles.container_visible : ""}`} style={{height: "250px"}}>
+                            <div className={styles.container_title}>user idとusernameを入力してください</div>
+                            <input type="text" name="usr_id" placeholder="id" defaultValue={usrId} onChange={(e) => setUsrId(parseInt(e.target.value))} className={styles.userinput} style={{left: "30%", width: "10%"}} />
+                            <input type="text" name="usr_name" placeholder="表示名" onChange={(e) => setUsrName(e.target.value)} className={styles.userinput} style={{left: "56%", width: "38%"}} />
+                            <button type="submit" className={styles.loginbutton} style={{top: "75%"}}>ログイン</button>
+                        </div>
+                    </>
+                    )
+                }
+            </Form>
         </>
     );
 }
