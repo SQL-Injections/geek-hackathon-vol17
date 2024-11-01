@@ -5,7 +5,7 @@ import { seatMargin, seatSize } from 'app/config'
 import { useFetcher } from '@remix-run/react'
 
 
-const SelectableSeatSet = ({ usrId, classId, usrName, defaultseats } : { usrId: string, classId: string, usrName: string, defaultseats: Array<Array<boolean|Array<{"usr_id": string, "usr_name": string}>>> }) => {
+const SelectableSeatSet = ({ usrId, classId, usrName, defaultseats } : { usrId: string, classId: string, usrName: string, defaultseats: Array<Array<boolean|Array<{"id": string, "displayName": string}>>> }) => {
     console.log("component-a", defaultseats)
     const containerRef = useRef<HTMLDivElement>(null)
     // 1次元に変換する
@@ -28,7 +28,7 @@ const SelectableSeatSet = ({ usrId, classId, usrName, defaultseats } : { usrId: 
     useEffect(() => {
         // fetcherのレスポンスをチェック
         if (fetcher.data) {
-            setEnableSeats((fetcher.data as Array<Array<boolean|Array<{"usr_id": string, "usr_name": string}>>>).flat(1));
+            setEnableSeats((fetcher.data as Array<Array<boolean|Array<{"id": string, "displayName": string}>>>).flat(1));
         }
     }, [fetcher.data])
 
@@ -48,7 +48,7 @@ const SelectableSeatSet = ({ usrId, classId, usrName, defaultseats } : { usrId: 
                                     typeof(enableSeats[index]) == "boolean" 
                                         ? "" 
                                         : Array.from(enableSeats[index])
-                                            .map(seat => `${seat.usr_name}(${seat.usr_id})`)
+                                            .map(seat => `${seat.displayName}`)
                                             .join(", ")} 
                                 isDisabled={!enableSeats[index]} 
                             />

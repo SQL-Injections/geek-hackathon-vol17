@@ -1,6 +1,6 @@
 import { isValidUsr } from "./student_dat"
 // 連想配列を定義
-let Classobj : {[key:string]:Array<Array<boolean|Array<{"usr_id": string, "usr_name": string}>>>}={
+let Classobj : {[key:string]:Array<Array<boolean|Array<{"id": string, "displayName": string}>>>}={
     "1": [[true,true,false],[false,true,true],[true,false,true]]
     // "ClassID": "座席のデータ"
 };
@@ -56,12 +56,12 @@ export function modifyClass(classId: string, usrId: string, usrName: string, x: 
                 continue
             }
             if (Classobj[classId][i][j] instanceof Array) {
-                const set = Classobj[classId][i][j] as Array<{"usr_id": string, "usr_name": string}>
+                const set = Classobj[classId][i][j] as Array<{"id": string, "displayName": string}>
                 // もしsetにusrIdが存在するなら削除する
-                if (set.some((value) => value.usr_id === usrId)) {
+                if (set.some((value) => value.id === usrId)) {
                     //usrIdを削除
                     for (let k = 0; k < set.length; k++) {
-                        if (set[k]["usr_id"] === usrId) {
+                        if (set[k]["id"] === usrId) {
                             set.splice(k, 1)
                             break
                         }
@@ -77,11 +77,11 @@ export function modifyClass(classId: string, usrId: string, usrName: string, x: 
     }
     // その場所がまだ選択されていないなら
     if (Classobj[classId][y][x] === true) {
-        Classobj[classId][y][x] = [{"usr_id": usrId, "usr_name": usrName}]
+        Classobj[classId][y][x] = [{"id": usrId, "displayName": usrName}]
     }
     // もう誰かに選択されているなら
     else if (Classobj[classId][y][x] instanceof Array) {
-        Classobj[classId][y][x].push({"usr_id": usrId, "usr_name": usrName})
+        Classobj[classId][y][x].push({"id": usrId, "displayName": usrName})
     }
     console.dir(Classobj[classId], { depth: null });
     // 処理が終了したので解除
