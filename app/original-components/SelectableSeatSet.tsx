@@ -32,7 +32,7 @@ const SelectableSeatSet = ({ usrId, classId, defaultseats } : { usrId: string, c
     }, [fetcher.data])
 
     return (
-        <Box ref={containerRef} className='overflow-auto' maxWidth='80%' maxHeight='40%' mx='auto'>
+        <Box ref={containerRef} className='overflow-auto' maxWidth='100%' maxHeight='100%' mx='auto'>
             <Grid className='w-fit' justifyContent='center' templateColumns={`repeat(${columnCount}, 1fr)`}>
                 {[...Array(totalSeats)].map((_, index) => {
                     return (

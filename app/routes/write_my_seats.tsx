@@ -26,11 +26,12 @@ export default function Index() {
 
     return (
         <>
-            <div className={styles.seats_container}>
+            <div className={styles.seats_container} style={{ display: 'block' }}>
+                <div className={styles.seats_amount_text}>自身が移動したい席を選択してください(色の薄い席は無効です)</div>
                 <div className={styles.seats}>
                     <Box className={`mx-auto ${styles.seats_boxes}`}>
                         <SelectableSeatSet usrId={query.usrId} classId={query.classId} defaultseats={query.seatsDat}  />
-                    </Box>
+                        </Box>
                 </div>
             </div>
         </>
