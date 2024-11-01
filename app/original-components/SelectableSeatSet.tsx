@@ -3,21 +3,20 @@ import Seat from './Seat'
 import { Box, Grid } from '@chakra-ui/react'
 import { seatMargin, seatSize } from 'app/config'
 import { useFetcher } from '@remix-run/react'
-import { Seat as SeatType, Student } from '~/model/model'
+import { Room, Seat as SeatType, Student } from '~/model/model'
 
-const SelectableSeatSet: React.FC<{ user: Student; classId: string; defaultSeats: SeatType[][] }> = ({
+const SelectableSeatSet: React.FC<{ user: Student; classId: string; defaultSeats: Room }> = ({
     user,
     classId,
     defaultSeats,
 }) => {
-    console.log('component-a', defaultSeats)
     const containerRef = useRef<HTMLDivElement>(null)
     // 1次元に変換する
-    const totalSeats = defaultSeats.length * defaultSeats[0].length
-    const columnCount = defaultSeats[0].length
+    const totalSeats = defaultSeats.seats.length * defaultSeats.seats[0].length
+    const columnCount = defaultSeats.seats[0].length
     const [enableSeats, setEnableSeats] = useState(
         //seatsの中身を1次元に
-        defaultSeats.flat(1),
+        defaultSeats.seats.flat(1),
     )
     const fetcher = useFetcher()
 

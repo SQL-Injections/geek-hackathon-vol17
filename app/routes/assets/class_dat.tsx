@@ -67,7 +67,7 @@ export function modifyClass(classId: string, usrId: string, usrName: string, x: 
     //元居た場所が存在するならそれを削除する
     for (let i = 0; i < row; i++) {
         for (let j = 0; j < column; j++) {
-            if (seats instanceof Array) {
+            if (seats[i][j] instanceof Array) {
                 let set: Student[] = seats[i][j] as Student[]
                 // もしsetにusrIdが存在するなら削除する
                 if (set.some((value) => value.id === usrId)) {
@@ -97,5 +97,5 @@ export function modifyClass(classId: string, usrId: string, usrName: string, x: 
     console.dir(Classobj[classId], { depth: null })
     // 処理が終了したので解除
     blocked = false
-    return Classobj[classId]
+    return Classobj[classId].seats
 }

@@ -40,7 +40,7 @@ export default function Index() {
     function clickedLogin() {
         // 一応確認
         // 二つ目のコンテナを表示する
-        if (isToClassSeats(classId)) {
+        if (idToClassSeats(classId)) {
             // もし、idが正しいなら
             // 二つ目のコンテナを表示する
             setIsInputted(true)

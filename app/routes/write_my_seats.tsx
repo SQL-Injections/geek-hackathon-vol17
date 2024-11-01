@@ -18,7 +18,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const data = await requireUserSession(request)
     const { usrId, classId, usrName } = data
 
-    const seatsDat = await isToClassSeats(classId)
+    const seatsDat = await idToClassSeats(classId)
     return json({ usrId, classId, usrName, seatsDat })
 }
 
@@ -26,7 +26,7 @@ export default function Index() {
     // とりあえずクエリを取り出す
     const query: any = useLoaderData()
     const navigate = useNavigate()
-    console.log('query.seatsDat', query.seatsDat)
+    console.log('query.seatsDat', query.seatsDat, query.usrId, query.usrName)
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         console.log('submit', '\n\n\n\n')

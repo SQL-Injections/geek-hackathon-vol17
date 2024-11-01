@@ -3,7 +3,12 @@ import { Student } from '~/model/model'
 export type ClassStudents = {
     [classId: string]: Array<Student>
 }
-const studentDat: ClassStudents = {}
+const studentDat: ClassStudents = {
+    '1': [{
+        id: '1',
+        displayName: '山田太郎'
+    }]
+}
 
 export async function isValidUsr(userId: string, classId: string) {
     const studentList = studentDat[classId]
@@ -11,7 +16,6 @@ export async function isValidUsr(userId: string, classId: string) {
     if (!userId || !classId) {
         return false
     }
-
     return studentList.some((student) => student.id === userId)
 }
 
