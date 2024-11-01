@@ -1,6 +1,6 @@
 
 // 連想配列を定義
-let Classobj : {[key:string]:Array<Array<boolean|Array<string>>>}={
+let Classobj : {[key:string]:Array<Array<boolean|Array<{"usr_id": string, "usr_name": string}>>>}={
     "1": [[true,true,false],[false,true,true],[true,false,true]]
     // "ClassID": "座席のデータ"
 };
@@ -36,7 +36,7 @@ export function pushIdAndClass(id: string, seats:Array<Array<boolean>>){
      *  その結果その場所に誰もいない場合はtrueに書き換える
      *  そのクラスclassidが存在しない場合にはfalseを返す
      */
-export function modifyClass(classId: string, usrId: string, x: number, y: number){
+export function modifyClass(classId: string, usrId: string, usrName: string, x: number, y: number){
     if (!Classobj[classId]) {
         return false
     }
@@ -52,12 +52,12 @@ export function modifyClass(classId: string, usrId: string, x: number, y: number
                 continue
             }
             if (Classobj[classId][i][j] instanceof Array) {
-                const set = Classobj[classId][i][j] as Array<string>
+                const set = Classobj[classId][i][j] as Array<{"usr_id": string, "usr_name": string}>
                 // もしsetにusrIdが存在するなら削除する
-                if (set.includes(usrId)) {
+                if (set.some((value) => value.usr_id === usrId)) {
                     //usrIdを削除
                     for (let k = 0; k < set.length; k++) {
-                        if (set[k] === usrId) {
+                        if (set[k]["usr_id"] === usrId) {
                             set.splice(k, 1)
                             break
                         }
@@ -73,13 +73,13 @@ export function modifyClass(classId: string, usrId: string, x: number, y: number
     }
     // その場所がまだ選択されていないなら
     if (Classobj[classId][y][x] === true) {
-        Classobj[classId][y][x] = [usrId]
+        Classobj[classId][y][x] = [{"usr_id": usrId, "usr_name": usrName}]
     }
     // もう誰かに選択されているなら
-    else if (Classobj[classId][y][x] instanceof Set) {
-        Classobj[classId][y][x].add(usrId)
+    else if (Classobj[classId][y][x] instanceof Array) {
+        Classobj[classId][y][x].push({"usr_id": usrId, "usr_name": usrName})
     }
-    console.log("class modify ",Classobj[classId], "y" , y, "x" , x);
+    console.dir(Classobj[classId], { depth: null });
     // 処理が終了したので解除
     blocked = false
     return Classobj[classId]

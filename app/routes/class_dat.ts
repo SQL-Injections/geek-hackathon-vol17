@@ -21,8 +21,9 @@ export async function action({ request }: any) {
     if (func === "modifyClass") {
         const x = Number(formData.x);
         const y = Number(formData.y);
+        const usrName = String(formData.usrName);
         const usrId = String(formData.usrId);
-        return await modifyClass(classId, usrId, x, y);
+        return await modifyClass(classId, usrId, usrName, x, y);
     }
     // console.log(classId);
     const classInfo = JSON.parse(formData.classInfo);

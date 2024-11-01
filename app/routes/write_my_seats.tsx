@@ -15,9 +15,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const url = new URL(request.url)
     const usrId = url.searchParams.get('usr_id')?.toString() as string
     const classId = url.searchParams.get('class_id')?.toString() as string
+    const usrName = url.searchParams.get('usr_name')?.toString() as string
     const seatsDat = await isToClassSeats(classId)
     console.log("seatsDat", seatsDat);
-    return json({ usrId, classId, seatsDat })
+    return json({ usrId, classId, usrName, seatsDat })
 }
 
 export default function Index() {
@@ -30,7 +31,7 @@ export default function Index() {
                 <div className={styles.seats_amount_text}>自身が移動したい席を選択してください(色の薄い席は無効です)</div>
                 <div className={styles.seats}>
                     <Box className={`mx-auto ${styles.seats_boxes}`}>
-                        <SelectableSeatSet usrId={query.usrId} classId={query.classId} defaultseats={query.seatsDat}  />
+                        <SelectableSeatSet usrId={query.usrId} classId={query.classId} usrName={query.usrName} defaultseats={query.seatsDat}  />
                         </Box>
                 </div>
             </div>

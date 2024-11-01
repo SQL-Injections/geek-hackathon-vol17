@@ -5,7 +5,7 @@ import { seatMargin, seatSize } from 'app/config'
 import { useFetcher } from '@remix-run/react'
 
 
-const SelectableSeatSet = ({ usrId, classId, defaultseats } : { usrId: string, classId: string, defaultseats: Array<Array<boolean|Array<string>>> }) => {
+const SelectableSeatSet = ({ usrId, classId, usrName, defaultseats } : { usrId: string, classId: string, usrName: string, defaultseats: Array<Array<boolean|Array<{"usr_id": string, "usr_name": string}>>> }) => {
     const containerRef = useRef<HTMLDivElement>(null)
     // 1次元に変換する
     const totalSeats = defaultseats.length * defaultseats[0].length
@@ -21,13 +21,13 @@ const SelectableSeatSet = ({ usrId, classId, defaultseats } : { usrId: string, c
 
     function modifySeats(index : number) {
         // fetcherを使用してユーザーデータを確認
-        fetcher.submit({ usrId: usrId, classId: classId, x: Math.floor(index % columnCount), y: Math.floor(index / columnCount), function: "modifyClass" }, { method: "post", action: `/class_dat`, encType: "application/json" });
+        fetcher.submit({ usrId: usrId, classId: classId, usrName: usrName, x: Math.floor(index % columnCount), y: Math.floor(index / columnCount), function: "modifyClass" }, { method: "post", action: `/class_dat`, encType: "application/json" });
     }
 
     useEffect(() => {
         // fetcherのレスポンスをチェック
         if (fetcher.data) {
-            setEnableSeats((fetcher.data as Array<Array<boolean|Array<string>>>).flat(1));
+            setEnableSeats((fetcher.data as Array<Array<boolean|Array<{"usr_id": string, "usr_name": string}>>>).flat(1));
         }
     }, [fetcher.data])
 
@@ -42,7 +42,15 @@ const SelectableSeatSet = ({ usrId, classId, defaultseats } : { usrId: string, c
                             margin={seatMargin}
                             onClick={() => enableSeats[index] ? modifySeats(index) : null}
                         >
-                            <Seat text={typeof(enableSeats[index]) == "boolean" ? "" : Array.from(enableSeats[index]).join(",")} isDisabled={!enableSeats[index]} />
+                            <Seat 
+                                text={
+                                    typeof(enableSeats[index]) == "boolean" 
+                                        ? "" 
+                                        : Array.from(enableSeats[index])
+                                            .map(seat => `${seat.usr_name}(${seat.usr_id})`)
+                                            .join(", ")} 
+                                isDisabled={!enableSeats[index]} 
+                            />
                         </Box>
                     )
                 })}
