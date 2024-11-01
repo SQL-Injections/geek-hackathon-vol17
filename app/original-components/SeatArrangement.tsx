@@ -4,7 +4,15 @@ import { Box, Grid } from '@chakra-ui/react'
 import { seatMargin, seatSize } from 'app/config'
 import { useInteractJS } from '~/utils/hooks'
 
-const SeatArrangement = ({ row, col, handleValueChange }: { row: number, col: number, handleValueChange: (value: Array<Array<number|boolean>>) => void }) => {
+const SeatArrangement = ({
+    row,
+    col,
+    handleValueChange,
+}: {
+    row: number
+    col: number
+    handleValueChange: (value: Array<Array<number | boolean>>) => void
+}) => {
     const [rowCount, setRowCount] = useState(row) // 行数の状態
     const [columnCount, setColumnCount] = useState(col) // 列数の状態
     const totalSeats = rowCount * columnCount
@@ -16,28 +24,27 @@ const SeatArrangement = ({ row, col, handleValueChange }: { row: number, col: nu
         }),
     )
 
-
-    function handleInputChange( array : Array<any>) {
-        const value = array;
+    function handleInputChange(array: Array<any>) {
+        const value = array
         //これ毎回処理させるのすごくあれだけど
-        const send: Array<Array<number|boolean>> = [];
+        const send: Array<Array<number | boolean>> = []
         console.log(columnCount)
         // 2次元配列に変換
         for (let i = 0; i < value.length / columnCount; i++) {
-            send.push(value.slice(i * columnCount,(i + 1) * (columnCount)));
+            send.push(value.slice(i * columnCount, (i + 1) * columnCount))
             // 全てt/fをf/tに
             for (let j = 0; j < send[i].length; j++) {
-                send[i][j] = Boolean(1 - Number(send[i][j]));
+                send[i][j] = Boolean(1 - Number(send[i][j]))
             }
         }
-        handleValueChange(send);
+        handleValueChange(send)
     }
 
     useEffect(() => {
-        setRowCount(row);
-        setColumnCount(col);
-        setDisableSeats(Array(row * col).fill(false)); // ディセーブル状態も更新
-    }, [row, col]);
+        setRowCount(row)
+        setColumnCount(col)
+        setDisableSeats(Array(row * col).fill(false)) // ディセーブル状態も更新
+    }, [row, col])
 
     useEffect(() => {
         handleInputChange(disableSeats)

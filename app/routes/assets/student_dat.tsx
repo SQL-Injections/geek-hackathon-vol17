@@ -1,29 +1,26 @@
-const studentDat: { [key: string]: Set<string> } = {}
+import { Student } from '~/model/model'
 
-export async function isValidUsr(id: string | undefined, classid: string | undefined) {
-    console.log(id, classid)
-    if (!id || !classid) {
+export type ClassStudents = {
+    [classId: string]: Array<Student>
+}
+const studentDat: ClassStudents = {}
+
+export async function isValidUsr(userId: string, classId: string) {
+    const studentList = studentDat[classId]
+    console.log(userId, classId)
+    if (!userId || !classId) {
         return false
-    } else {
-        if (!studentDat[classid]) {
-            return false
-        } else {
-            return studentDat[classid].has(id)
-        }
     }
+
+    return studentList.some((student) => student.id === userId)
 }
 
 // createStudent
-export async function pushUsr(id: string | undefined, classid: string | undefined) {
-    if (!id || !classid) {
+export async function pushUsr(user: Student, classId: string) {
+    if (!user.id || !classId) {
         return false
-    } else {
-        // クラスidが存在していないならクラスを生成する
-        if (!studentDat[classid]) {
-            studentDat[classid] = new Set()
-        }
-        // クラスidが存在しているならクラスに追加する
-        studentDat[classid].add(id)
-        return true
     }
+
+    studentDat[classId] = [...studentDat[classId], user]
+    return true
 }
