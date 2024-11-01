@@ -41,8 +41,4 @@ export type Room = {
     seats: Array<Array<Seat>>
 }
 
-export type Seat = {
-    isAvailable: boolean
-    student?: Array<Student>
-    isSelected?: boolean
-}
+export type Seat = boolean | Array<Student>
