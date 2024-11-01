@@ -3,7 +3,7 @@ export type ClassList = {
 }
 
 export type SeatsInfo = {
-    [classId: string]: Array<Array<Room>>
+    [classId: string]: Room
 }
 
 // 今後使うかも　使わなかったら消して
@@ -15,6 +15,8 @@ export type SeatsInfo = {
 export type ClassStudents = {
     [classId: string]: Array<Student>
 }
+
+// これより上は、本来各ページで定義されるものだが、わかりやすいようにここで定義する。
 
 export type Manager = {
     id: string
@@ -35,6 +37,7 @@ export type Room = {
     row: number // 縦
     column: number // 横
     seatAmount: number
+    isConfirmed?: boolean
     seats: Array<Array<Seat>>
 }
 
