@@ -1,17 +1,15 @@
-import type { MetaFunction, LoaderFunctionArgs } from "@remix-run/node";
-import { Form, useFetcher } from "@remix-run/react";
-import styles from "~/styles/login_students.module.css";
-import { isToClassSeats } from "~/routes/assets/class_dat";
-import { isValidUsr, pushUsr } from "./assets/student_dat";
-import { useState, useEffect } from "react";
-import { login } from "./assets/student_login";
+
+import type { MetaFunction, LoaderFunctionArgs } from '@remix-run/node'
+import { Form, useFetcher } from '@remix-run/react'
+import styles from '~/styles/login_students.module.css'
+import { idToClassSeats } from '~/routes/assets/class_dat'
+import { isValidUsr, pushUsr } from './assets/student_dat'
+import { useState, useEffect } from 'react'
+import { login } from "./assets/student_login"
 
 export const meta: MetaFunction = () => {
-    return [
-        { title: "New Remix App" },
-        { name: "description", content: "Welcome to Remix!" },
-    ];
-};
+    return [{ title: 'New Remix App' }, { name: 'description', content: 'Welcome to Remix!' }]
+}
 
 export async function action({ request }: any) {
     const formData = await request.formData();
@@ -33,43 +31,45 @@ export async function action({ request }: any) {
 }
 
 export default function Index() {
-    const [usrId, setUsrId] = useState<number>();
-    const [usrName, setUsrName] = useState("");
-    const [classId, setClassId] = useState<string>("");
-    const [isInputted, setIsInputted] = useState(false);
-    const fetcher = useFetcher();
-    
+    const [usrId, setUsrId] = useState<number>()
+    const [usrName, setUsrName] = useState('')
+    const [classId, setClassId] = useState<string>('')
+    const [isInputted, setIsInputted] = useState(false)
+    const fetcher = useFetcher()
+
     function clickedLogin() {
+        // 一応確認
         // 二つ目のコンテナを表示する
         if (isToClassSeats(classId)) {
             // もし、idが正しいなら
             // 二つ目のコンテナを表示する
-            setIsInputted(true);
+            setIsInputted(true)
         }
     }
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault(); // すぐに送信せず待機
+        event.preventDefault() // すぐに送信せず待機
     }
 
     useEffect(() => {
         // fetcherのレスポンスをチェック
         if (fetcher.data) {
-            console.log("Fetcher data:", fetcher.data);
+            console.log('Fetcher data:', fetcher.data)
 
             // バリデーションが成功した場合のみフォーム送信
-            if (fetcher.data.isValid) {
-                console.log("バリデーション成功: ユーザーが存在します");
-                const form = document.querySelector("form") as HTMLFormElement;
-                form.action = `/write_my_seats?class_id=${classId}&usr_id=${usrId}&usr_name=${usrName}`;
-                form.submit(); // バリデーションに通った後で送信
+            // if (fetcher.data.isValid) {
+            if (fetcher.data) {
+                console.log('バリデーション成功: ユーザーが存在します')
+                const form = document.querySelector('form') as HTMLFormElement
+                form.action = `/write_my_seats?class_id=${classId}&usr_id=${usrId}&usr_name=${usrName}`
+                form.submit() // バリデーションに通った後で送信
             } else {
-                console.log("バリデーション失敗: ユーザーが存在しません");
+                console.log('バリデーション失敗: ユーザーが存在しません')
             }
         }
-    }, [fetcher.data]);
+    }, [fetcher.data])
 
-    return(
+    return (
         <>
             <Form method="post">
                 <div className={styles.container} style={{height: "250px"}}>
@@ -91,5 +91,5 @@ export default function Index() {
                 }
             </Form>
         </>
-    );
+    )
 }

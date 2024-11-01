@@ -1,59 +1,68 @@
-export const adminDat: { [key: string]: { password: string; classes: Set<string> } } = {}
+import { Class, Manager } from '~/model/model'
 
-export function isValidUsr(usrId: string | undefined, password: string | undefined) {
-    if (!usrId || !password) {
-        console.log("(!usrId || !password)")
+
+export type ClassList = {
+    [managerId: string]: Array<Class>
+}
+export let adminList: Manager[] = []
+
+export let classList: ClassList = {}
+
+export function isValidUsr(user: Manager) {
+    if (!user.id || !user.password) {
         return false
     }
+
+    // 変更加わると思うから、一つにまとめる。
     // ユーザがいなければ
-    if (!adminDat[usrId]) {
-        console.log("(!adminDat[usrId])")
-        console.log("usr : ",adminDat[usrId])
-        return false
-    }
     //パスワードが一致するなら
-    console.log("passの一致 : ",adminDat[usrId]['password'] === password)
-    return adminDat[usrId]['password'] === password
+     return adminList.some((manager) => manager.id === user.id && manager.password === user.password) 
 }
 
 // createUser
-export function pushUsr(usrId: string | undefined, password: string | undefined) {
-    if (!usrId || !password) {
-        console.log("(!usrId || !password)")
+export function pushUsr(user: Manager) {
+    if (!user.id || !user.password) {
         return false
     }
     // 既にユーザ名が存在する場合はfalseを返す
-    if (adminDat[usrId]) {
-        console.log("(adminDat[usrId])")
-        console.log((adminDat[usrId]))
+    if (adminList.some((manager) => manager.id === user.id)) {
+
         return false
     }
 
     // データ生成
-    adminDat[usrId] = { password: password, classes: new Set() }
-    console.log(adminDat[usrId])
+    adminList = [...adminList, { id: user.id, password: user.password }]
+
+    classList[user.id] = []
     return true
 }
 
 // createClass
-export function addClass(usrId: string | undefined, password: string | undefined, classId: string | undefined) {
-    if (!usrId || !password || !classId) {
+export function addClass(usrId: string, password: string, cls: Class) {
+    if (!usrId || !password || !cls.id) {
         return false
     }
     //ユーザが存在しないならエラー
-    if (!adminDat[usrId]) {
+    if (!adminList.some((manager) => manager.id === usrId && manager.password === password)) {
         return false
     }
 
     // TODO
     // クラス名が被っている場合にエラー出力
 
+    if (classList[usrId].some((c) => c.name === cls.name)) {
+        return false
+    }
+
     // データ生成
-    adminDat[usrId]['classes'].add(classId)
+    classList = {
+        ...classList,
+        [usrId]: [...classList[usrId], cls],
+    }
     return true
 }
 
 // 仮置き
 export const getClassList = (classAdmin: string) => {
-    return Array.from(adminDat[classAdmin].classes) || []
+    return classList[classAdmin] || []
 }

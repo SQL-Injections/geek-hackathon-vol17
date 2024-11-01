@@ -20,9 +20,15 @@ export default function Index() {
     const [width, setWidth] = useState<number>(0)
     const [errMsg, setErrMsg] = useState('')
     const [isConfirmed, setIsConfirmed] = useState(false)
-    const [SeatsArray, setSeatsArray] = useState<Array<Array<number|boolean>>>([])
+    const [SeatsArray, setSeatsArray] = useState<Array<Array<number | boolean>>>([])
     const fetcher = useFetcher()
 
+    /*************  ✨ Codeium Command ⭐  *************/
+    /**
+     * input seats amount and show the second container
+     * @returns {void}
+     */
+    /******  3d251e3f-7e9e-4df8-840c-b57c63aa7efc  *******/
     function clickedSeatsAmount() {
         // 一応確認
         console.log(isInputted)
@@ -44,7 +50,9 @@ export default function Index() {
 
     function validateInputs() {
         if (height * width < seatsAmount) {
-            setErrMsg(`入力された${height}×${width} = ${height * width}席では要求された${seatsAmount}席を満たしません。`)
+            setErrMsg(
+                `入力された${height}×${width} = ${height * width}席では要求された${seatsAmount}席を満たしません。`,
+            )
             return false
         }
         setErrMsg('')
@@ -61,30 +69,35 @@ export default function Index() {
     //     form.action = `/management_classes`
     // }
 
-    const handleValueChange =  (newValue: Array<Array<number|boolean>>) => {
-        console.log("newValue:",newValue)
+    const handleValueChange = (newValue: Array<Array<number | boolean>>) => {
+        console.log('newValue:', newValue)
         setSeatsArray(newValue)
     }
-
 
     function createClass(event: React.FormEvent<HTMLFormElement>) {
         //クラス情報を追加する
         //とりあえずidをランダム生成
         const id = Math.floor(Math.random() * 10000000)
-        console.log("Seats:",SeatsArray)
-        console.log("id:",id)
+        console.log('Seats:', SeatsArray)
+        console.log('id:', id)
         // SeatsArrayの有効座席がSeatsAmount個なら
         if (SeatsArray.flat().filter((seat) => seat).length === seatsAmount) {
-            console.log("クラス作成")
+            console.log('クラス作成')
             //クラスを作成する
-            fetcher.submit({classId: String(id), classInfo: JSON.stringify(SeatsArray)}, { method: "post", action: `/class_dat`, encType: "application/json" });
+            fetcher.submit(
+                { classId: String(id), classInfo: JSON.stringify(SeatsArray) },
+                { method: 'post', action: `/class_dat`, encType: 'application/json' },
+            )
             //formに飛ぶ
-            event.currentTarget.action = `/management_classes`;
-        }
-        else {
-            console.log("有効な座席を入力してください")
+            event.currentTarget.action = `/management_classes`
+        } else {
+            console.log('有効な座席を入力してください')
             // とりあえず
-            alert(`選択した席数${seatsAmount}に対して現在選択中の席数は${SeatsArray.flat().filter((seat) => seat).length}個です。`)
+            alert(
+                `選択した席数${seatsAmount}に対して現在選択中の席数は${
+                    SeatsArray.flat().filter((seat) => seat).length
+                }個です。`,
+            )
             // キャンセル
             event.preventDefault()
         }
@@ -105,12 +118,19 @@ export default function Index() {
                     className={styles.seats_amount_input}
                 />
                 <br />
-                <button type='submit' className={styles.seats_amount_button} disabled={isInputted} onClick={clickedSeatsAmount}>
+                <button
+                    type='submit'
+                    className={styles.seats_amount_button}
+                    disabled={isInputted}
+                    onClick={clickedSeatsAmount}
+                >
                     確定
                 </button>
             </div>
             {isInputted && (
-                <div className={`${styles.wh_length_container} ${isInputted ? styles.wh_length_container_visible : ''}`}>
+                <div
+                    className={`${styles.wh_length_container} ${isInputted ? styles.wh_length_container_visible : ''}`}
+                >
                     <div className={styles.seats_amount_text}>縦横幅を入力してください</div>
                     <div className={styles.wh_err_msg}>{errMsg}</div>
                     <div className={styles.wh_length_text} style={{ top: '45%' }}>
@@ -141,7 +161,12 @@ export default function Index() {
                         style={{ top: '60%' }}
                         disabled={isConfirmed}
                     />
-                    <button type='submit' className={styles.wh_length_button} disabled={isConfirmed} onClick={clickedWHAmount}>
+                    <button
+                        type='submit'
+                        className={styles.wh_length_button}
+                        disabled={isConfirmed}
+                        onClick={clickedWHAmount}
+                    >
                         確定
                     </button>
                 </div>
@@ -153,9 +178,11 @@ export default function Index() {
                         <SeatArrangement row={height} col={width} handleValueChange={handleValueChange} />
                     </Box>
                 </div>
-                
+
                 <Form action='/management_classes' method='post' onSubmit={createClass}>
-                    <button type='submit' className={styles.seats_submit_button}>クラスを生成する</button>
+                    <button type='submit' className={styles.seats_submit_button}>
+                        クラスを生成する
+                    </button>
                 </Form>
             </div>
         </>

@@ -2,6 +2,7 @@ import { json, useLoaderData, Link } from '@remix-run/react'
 import { useState } from 'react'
 import { getClassList } from '../assets/admin_dat'
 import { Box, Card, CardBody, Container, Heading, SimpleGrid } from '@chakra-ui/react'
+import { Class } from '~/model/model'
 
 export const loader = async () => {
     const classList = getClassList('admin')
@@ -30,9 +31,9 @@ export default function Index() {
                 クラス一覧
             </Box>
             <SimpleGrid columns={{ base: 3, md: 5 }} gridGap={4}>
-                {classes.map((className: string, index: number) => (
+                {classes.map((cls: Class, index: number) => (
                     // とりあえず、className
-                    <Link to={`/input_seats_amount?${className}`} key={index} style={{ textDecoration: 'none' }}>
+                    <Link to={`/input_seats_amount?${cls.name}`} key={index} style={{ textDecoration: 'none' }}>
                         <Box
                             height='10vh'
                             display='flex'
@@ -50,7 +51,7 @@ export default function Index() {
                             textAlign='center'
                         >
                             <Heading size='md' color='blue.800'>
-                                {className}
+                                {cls.name}
                             </Heading>
                         </Box>
                     </Link>
