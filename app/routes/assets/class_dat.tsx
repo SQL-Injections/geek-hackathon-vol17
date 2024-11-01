@@ -1,4 +1,4 @@
-
+import { isValidUsr } from "./student_dat"
 // 連想配列を定義
 let Classobj : {[key:string]:Array<Array<boolean|Array<{"usr_id": string, "usr_name": string}>>>}={
     "1": [[true,true,false],[false,true,true],[true,false,true]]
@@ -38,6 +38,10 @@ export function pushIdAndClass(id: string, seats:Array<Array<boolean>>){
      */
 export function modifyClass(classId: string, usrId: string, usrName: string, x: number, y: number){
     if (!Classobj[classId]) {
+        return false
+    }
+    // ユーザーが無効であれば処理を終了する
+    if (!isValidUsr(usrId, classId)) {
         return false
     }
     while (blocked) {
