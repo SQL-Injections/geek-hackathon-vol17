@@ -1,5 +1,5 @@
 import { json } from "@remix-run/node"
-import { isToClassSeats, pushIdAndClass, modifyClass } from "./assets/class_dat" // Assume these are your server-side utility functions
+import { idToClassSeats, pushIdAndClass, modifyClass } from "./assets/class_dat" // Assume these are your server-side utility functions
 import { requireUserSession } from "./assets/student_auth.server"
 
 // Validate class
