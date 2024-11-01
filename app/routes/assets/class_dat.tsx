@@ -7,11 +7,14 @@ let Classobj : {[key:string]:Array<Array<boolean|Array<{"id": string, "displayNa
 // サーバーへの問い合わせが同時にあった場合に不整合を起こさないため
 let blocked = false
   
-export function isToClassSeats(id: string){
+export function idToClassSeats(id: string | undefined){
     // Classobj[id].forEach(function( value ) {
     //     console.log(value);
     // });
-    return Classobj[id];
+    if (id != undefined) {
+        return Classobj[id];
+    }
+    else return 0;
 }
 
 export function pushIdAndClass(id: string, seats:Array<Array<boolean>>){
