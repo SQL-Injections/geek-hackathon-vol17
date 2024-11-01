@@ -6,18 +6,19 @@ import styles from '~/styles/write_my_seats.module.css'
 import SelectableSeatSet from '~/original-components/SelectableSeatSet'
 import { idToClassSeats } from './assets/class_dat'
 import { useNavigate } from '@remix-run/react'
+import { requireUserSession } from './assets/student_auth.server'
 
 export const meta: MetaFunction = () => {
     return [{ title: 'New Remix App' }, { name: 'description', content: 'Welcome to Remix!' }]
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-    const url = new URL(request.url)
-    const usrId = url.searchParams.get('usr_id')?.toString() as string
-    const classId = url.searchParams.get('class_id')?.toString() as string
-    const usrName = url.searchParams.get('usr_name')?.toString() as string
-    const seatsDat = await idToClassSeats(classId)
-    console.log('seatsDat', seatsDat)
+
+    // sessionからデータを取り出す
+    const data = await requireUserSession(request)
+    const { usrId, classId, usrName } = data
+
+    const seatsDat = await isToClassSeats(classId)
     return json({ usrId, classId, usrName, seatsDat })
 }
 

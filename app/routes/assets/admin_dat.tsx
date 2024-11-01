@@ -1,5 +1,6 @@
 import { Class, Manager } from '~/model/model'
 
+
 export type ClassList = {
     [managerId: string]: Array<Class>
 }
@@ -15,9 +16,7 @@ export function isValidUsr(user: Manager) {
     // 変更加わると思うから、一つにまとめる。
     // ユーザがいなければ
     //パスワードが一致するなら
-    if (!adminList.some((manager) => manager.id === user.id && manager.password === user.password)) {
-        return false
-    }
+     return adminList.some((manager) => manager.id === user.id && manager.password === user.password) 
 }
 
 // createUser
@@ -27,6 +26,7 @@ export function pushUsr(user: Manager) {
     }
     // 既にユーザ名が存在する場合はfalseを返す
     if (adminList.some((manager) => manager.id === user.id)) {
+
         return false
     }
 
@@ -34,7 +34,6 @@ export function pushUsr(user: Manager) {
     adminList = [...adminList, { id: user.id, password: user.password }]
 
     classList[user.id] = []
-
     return true
 }
 
