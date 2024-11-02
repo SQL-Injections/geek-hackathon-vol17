@@ -29,7 +29,7 @@ export async function requireUserSession(request: Request) {
     
 
     if (!data) {
-        throw redirect("/login_students");
+        throw redirect("/admin_login");
     }
 
     return data;
@@ -40,12 +40,10 @@ export async function getUserFromSession(request: Request) {
     );
 
     const usrId: string = session.get("usrId");
-    const classId: string = session.get("classId");
-    const usrName: string = session.get("usrName");
 
     if (!usrId) {
         return null;
     }
 
-    return {usrId, usrName, classId};
+    return {usrId};
 }

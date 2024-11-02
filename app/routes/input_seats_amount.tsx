@@ -1,16 +1,26 @@
 import { Box } from '@chakra-ui/react'
 import type { MetaFunction, LoaderFunctionArgs } from '@remix-run/node'
 import { redirect } from '@remix-run/node'
-import { useLoaderData, Form, useFetcher } from '@remix-run/react'
+import { json,useLoaderData, Form, useFetcher } from '@remix-run/react'
 import { create } from 'framer-motion/client'
 import { useState } from 'react'
 import { SeatArrangement } from '~/original-components'
 import Seat from '~/original-components/Seat'
+import { requireUserSession } from './assets/admin_auth.server'
 import styles from '~/styles/input_seats_amount.module.css'
 
 export const meta: MetaFunction = () => {
     return [{ title: 'New Remix App' }, { name: 'description', content: 'Welcome to Remix!' }]
 }
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+    // sessionからデータを取り出す
+    const data = await requireUserSession(request)
+    const usrId = data.usrId
+    
+    return json({ usrId: usrId })
+}
+
 
 export default function Index() {
     //clientでやってほしいので
@@ -22,7 +32,7 @@ export default function Index() {
     const [isConfirmed, setIsConfirmed] = useState(false)
     const [SeatsArray, setSeatsArray] = useState<Array<Array<number | boolean>>>([])
     const fetcher = useFetcher()
-
+    const admin = useLoaderData() as {usrId:string}
     /*************  ✨ Codeium Command ⭐  *************/
     /**
      * input seats amount and show the second container
@@ -88,8 +98,13 @@ export default function Index() {
                 { classId: String(id), classInfo: JSON.stringify(SeatsArray) },
                 { method: 'post', action: `/class_dat`, encType: 'application/json' },
             )
-            //formに飛ぶ
-            event.currentTarget.action = `/management_classes`
+            const formData = new FormData();
+            formData.append("usr_id", admin.usrId);
+            formData.append("class_id", id.toString());
+            formData.append("function", "addClass");
+
+            fetcher.submit(formData, { method: 'post', action: '/admin_dat' });
+            // event.currentTarget.action = `/management_classes`
         } else {
             console.log('有効な座席を入力してください')
             // とりあえず
@@ -179,7 +194,7 @@ export default function Index() {
                     </Box>
                 </div>
 
-                <Form action='/management_classes' method='post' onSubmit={createClass}>
+                <Form action='/management_classes' method='get' onSubmit={createClass}>
                     <button type='submit' className={styles.seats_submit_button}>
                         クラスを生成する
                     </button>

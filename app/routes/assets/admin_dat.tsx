@@ -40,21 +40,22 @@ export function pushUsr(user: Manager) {
 }
 
 // createClass
-export function addClass(usrId: string, password: string, cls: Class) {
-    if (!usrId || !password || !cls.id) {
+export function addClass(usrId: string ,cls: Class) {
+    console.log("addClass")
+    if (!usrId || !cls.id) {
         return false
     }
     //ユーザが存在しないならエラー
-    if (!adminList.some((manager) => manager.id === usrId && manager.password === password)) {
+    if (!adminList.some((manager) => manager.id === usrId)) {
+
         return false
     }
-
     // TODO
     // クラス名が被っている場合にエラー出力
-
-    if (classList[usrId].some((c) => c.name === cls.name)) {
-        return false
-    }
+    console.log(classList[usrId])
+    // if (classList[usrId].some((c) => c.name === cls.name)) {
+    //     return false
+    // }
 
     // データ生成
     classList = {
