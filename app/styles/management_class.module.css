@@ -1,0 +1,21 @@
+/* Button.css */
+.add_btn {
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    border-radius: 50%; /* 丸いボタン */
+    background-color: #007bff;
+    color: white;
+    font-size: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease; /* アニメーションの設定 */
+    cursor: pointer;
+  }
+  
+  .add_btn:hover {
+    border-radius: 5px; /* 四角くなる */
+    width: 150px; /* 幅を広げる */
+    height: 50px; /* 高さはそのまま */
+  }

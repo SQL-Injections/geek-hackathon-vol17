@@ -5,7 +5,8 @@ import { Box, Card, CardBody, Container, Heading, SimpleGrid } from '@chakra-ui/
 import { Button } from '../../components/ui/button'
 import { Class } from '~/model/model'
 import { requireUserSession } from '../assets/student_auth.server'
-import { idToClassSeats } from '../assets/class_dat'
+import React, { useState } from 'react';
+import styles from '~/styles/management_class.module.css'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
     // sessionからデータを取り出す
@@ -65,7 +66,7 @@ export default function Index() {
                 ))}
             </SimpleGrid>
 
-            <Button variant="surface"><a href={`/input_seats_amount`}>新規クラス追加</a></Button>
+            <button className={styles.add_btn}><a href={`/input_seats_amount`}>+</a></button>
         </Container>
     )
 }
