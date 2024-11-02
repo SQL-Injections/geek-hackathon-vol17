@@ -26,7 +26,7 @@ export default function Index() {
     // とりあえずクエリを取り出す
     const query: any = useLoaderData()
     const navigate = useNavigate()
-    console.log('query.seatsDat', query.seatsDat, query.usrId, query.usrName)
+    console.log('query.seatsDat', query.seatsDat)
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         console.log('submit', '\n\n\n\n')

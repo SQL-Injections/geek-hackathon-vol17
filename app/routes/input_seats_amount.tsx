@@ -107,8 +107,12 @@ export default function Index() {
             fetcher.submit(formData, { method: 'post', action: '/admin_dat' });
 
             const student_ids = []
+            const id_set = [...Array(1000)].map((_, i) => i)
             for (let i = 0; i < seatsAmount; i++) {
-                student_ids.push({id:(Math.floor(Math.random()) * 1000).toString(),name:""})
+                let rand = Math.floor(Math.random() * (id_set.length))
+                if (rand === id_set.length) rand = id_set.length - 1
+                const value = id_set.splice(rand, 1)
+                student_ids.push({id:value.toString(),name:""})
             }
 
             fetcher.submit(
