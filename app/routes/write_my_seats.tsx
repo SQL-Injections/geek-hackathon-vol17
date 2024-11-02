@@ -24,14 +24,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function Index() {
     // とりあえずクエリを取り出す
-    const query: any = useLoaderData()
+    const fetch: any = useLoaderData()
     const navigate = useNavigate()
-    console.log('query.seatsDat', query.seatsDat)
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         console.log('submit', '\n\n\n\n')
         event.preventDefault()
-        navigate(`/write_my_seats?usr_id=${query.usrId}&class_id=${query.classId}&usr_name=${query.usrName}`)
+        navigate(`/write_my_seats`)
     }
 
     return (
@@ -43,10 +42,10 @@ export default function Index() {
                 <div className={styles.seats}>
                     <Box className={`mx-auto ${styles.seats_boxes}`}>
                         <SelectableSeatSet
-                            key={JSON.stringify(query.seatsDat)}
-                            user={{ id: query.usrId, displayName: query.usrName }}
-                            classId={query.classId}
-                            defaultSeats={query.seatsDat}
+                            key={JSON.stringify(fetch.seatsDat)}
+                            user={{ id: fetch.usrId, displayName: fetch.usrName }}
+                            classId={fetch.classId}
+                            defaultSeats={fetch.seatsDat}
                         />
                     </Box>
                 </div>

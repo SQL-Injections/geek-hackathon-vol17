@@ -3,7 +3,6 @@ import type { MetaFunction, LoaderFunctionArgs } from '@remix-run/node'
 import { Form, useFetcher } from '@remix-run/react'
 import styles from '~/styles/login_students.module.css'
 import { idToClassSeats } from '~/routes/assets/class_dat'
-import { isValidUsr, pushUsr } from './assets/student_dat'
 import { useState, useEffect } from 'react'
 import { login } from "./assets/student_login"
 
@@ -57,7 +56,6 @@ export default function Index() {
             }
         }
     }, [fetcher.data])
-
     return (
         <>
             <Form method="post">
