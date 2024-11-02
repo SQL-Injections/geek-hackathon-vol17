@@ -37,7 +37,7 @@ export default function Index() {
         <>
             <div className={styles.seats_container} style={{ display: 'block' }}>
                 <div className={styles.seats_amount_text}>
-                    自身が移動したい席を選択してください(色の薄い席は無効です)
+                    {fetch.seatsDat.finished?"席替えは終了しました":"自身が移動したい席を選択してください(色の薄い席は無効です)"}
                 </div>
                 <div className={styles.seats}>
                     <Box className={`mx-auto ${styles.seats_boxes}`}>
