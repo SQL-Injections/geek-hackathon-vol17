@@ -106,7 +106,7 @@ export default function Index() {
                 row: height,
                 column: width,
                 seatAmount: seatsAmount,
-                isConfirmed: false,
+                isFinished: false,
                 seats: SeatsArray,
             }
             fetcher.submit(

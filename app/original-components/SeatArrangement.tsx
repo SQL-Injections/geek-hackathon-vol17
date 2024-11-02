@@ -67,15 +67,23 @@ const SeatArrangement = ({
                 })} */}
 
                 {seatArray.map((row, rowIndex) =>
-                    row.map((seat, colIndex) => (
-                        <Box
-                            key={`${rowIndex}-${colIndex}`}
-                            margin={seatMargin}
-                            onClick={onClick ? () => onClick(rowIndex, colIndex) : undefined}
-                        >
-                            <Seat text={`${rowIndex * columnCount + colIndex + 1}`} isDisabled={!seat} />
-                        </Box>
-                    )),
+                    row.map((seat, colIndex) => {
+                        let text = (rowIndex * columnCount + colIndex + 1).toString()
+                        if (Array.isArray(seat) && seat.length > 0) {
+                            // 複数の学生名をカンマ区切りで連結
+                            text = seat.map((student) => student.displayName).join(', ')
+                        }
+
+                        return (
+                            <Box
+                                key={`${rowIndex}-${colIndex}`}
+                                margin={seatMargin}
+                                onClick={onClick ? () => onClick(rowIndex, colIndex) : undefined}
+                            >
+                                <Seat text={text} isDisabled={!seat} />
+                            </Box>
+                        )
+                    }),
                 )}
             </Grid>
         </Box>

@@ -28,7 +28,9 @@ export async function action({ request }: any) {
             return { credentials: error.message }
         }
     }
+}
 
+export default function Index() {
     const actionData = useActionData()
     const [usrId, setUsrId] = useState<string>()
     const [password, setPassword] = useState<string>()
