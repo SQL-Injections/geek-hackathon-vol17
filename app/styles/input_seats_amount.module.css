@@ -5,7 +5,7 @@
     padding: 20px;
     text-align: center;
     width:30%;
-    height: 300px;
+    min-height: 300px;
     position: relative;
     left: 50%;
     transform: translate(-50%, 0%);
@@ -14,31 +14,29 @@
 }
 
 .seats_amount_text{
-    position: absolute;
     font-size: 20px;
     width: 100%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     color: black;
     top: 20%;
 }
-
+.seats_attribute{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
 .seats_amount_input{
-    position: absolute;
     width: 50%;
     height: 40px;
     border-radius: 5px;
     border: 1px solid #ccc;
     padding: 5px;
     font-size: 16px;
+    margin-top: 4px;
     text-align: right;
-    left : 50%;
-    transform: translate(-50%, -50%);
     top:50%;
 }
 
 .seats_amount_button{
-    position: absolute;
     width: 50%;
     height: 40px;
     border-radius: 5px;
@@ -47,9 +45,8 @@
     padding: 5px;
     margin: 10px 0;
     font-size: 16px;
+    margin-top: 16px;
     text-align: center;
-    left : 50%;
-    transform: translate(-50%, -50%);
     top:70%;
 }
 
@@ -149,7 +146,7 @@
     text-align: center;
     left : 50%;
     transform: translate(-50%, -50%);
-    top:30%;
+    top:90%;
     color: red;
     font-weight: bold;
 }

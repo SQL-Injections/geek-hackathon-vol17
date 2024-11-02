@@ -56,6 +56,9 @@ export function modifyClass(classId: string, usrId: string, usrName: string, x: 
     if (!isValidUsr(usrId, classId)) {
         return false
     }
+    if (Classobj[classId].finished) {
+        return false
+    }
     while (blocked) {
         // blocked
     }
@@ -105,6 +108,7 @@ export const toggleFinished = async (classId: string) => {
 }
 
 export const handleFinish = async (classId: string, room: Room) => {
+
     Classobj[classId] = room
     return Classobj[classId]
 }

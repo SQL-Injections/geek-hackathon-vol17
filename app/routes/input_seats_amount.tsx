@@ -25,6 +25,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function Index() {
     //clientでやってほしいので
     const [seatsAmount, setSeatsAmount] = useState(1)
+    const [className, setClassName] =  useState('')
     const [isInputted, setIsInputted] = useState(false)
     const [height, setHeight] = useState<number>(0)
     const [width, setWidth] = useState<number>(0)
@@ -60,12 +61,16 @@ export default function Index() {
         setWidth(Math.floor(sqrt))
     }
 
-    /*************  ✨ Codeium Command ⭐  *************/
-    /**
-     * バリデーション
-     * @returns {boolean} バリデーション結果
-     */
-    /******  4a1d2618-5589-4759-82a3-c8f9b7828716  *******/
+    function clickedWHAmount() {
+        // 一応確認
+        console.log(isInputted)
+        // 二つ目のコンテナを表示する
+        if(!validateInputs()){
+            return
+        }
+        setIsConfirmed(true)
+    }
+
     function validateInputs() {
         if (height * width < seatsAmount) {
             setErrMsg(
@@ -113,10 +118,12 @@ export default function Index() {
                 { classId: String(id), classInfo: JSON.stringify(roomDat) },
                 { method: 'post', action: `/class_dat`, encType: 'application/json' },
             )
+
             const formData = new FormData()
-            formData.append('usr_id', admin.usrId)
-            formData.append('class_id', id.toString())
-            formData.append('function', 'addClass')
+            formData.append("usr_id", admin.usrId)
+            formData.append("class_id", id.toString())
+            formData.append("class_name", className.toString())
+            formData.append("function", "addClass")
 
             fetcher.submit(formData, { method: 'post', action: '/admin_dat' })
 
@@ -170,33 +177,45 @@ export default function Index() {
     return (
         <>
             <div className={styles.seats_amount_container}>
-                <div className={styles.seats_amount_text}>席数を入力してください</div>
-                <input
-                    type='number'
-                    name='seats_amount'
-                    id='seats_amount'
-                    min='1'
-                    defaultValue={seatsAmount}
-                    disabled={isInputted}
-                    onChange={(e) => setSeatsAmount(Number(e.target.value))}
-                    className={styles.seats_amount_input}
-                />
-                <br />
-                <button
-                    type='submit'
-                    className={styles.seats_amount_button}
-                    disabled={isInputted}
-                    onClick={clickedSeatsAmount}
-                >
-                    確定
-                </button>
+                <div className={styles.seats_attribute}>
+                    <div className={styles.seats_amount_text}>クラスの名前を入力してください</div>
+                    <input
+                        type='text'
+                        name='class_name'
+                        id='class_name'
+                        min='1'
+                        defaultValue={seatsAmount}
+                        disabled={isInputted}
+                        onChange={(e) => setClassName(String(e.target.value))}
+                        className={styles.seats_amount_input}
+                    />
+                    <br />
+                    <div className={styles.seats_amount_text}>クラスの人数を入力してください</div>
+                    <input
+                        type='number'
+                        name='seats_amount'
+                        id='seats_amount'
+                        min='1'
+                        defaultValue={seatsAmount}
+                        disabled={isInputted}
+                        onChange={(e) => setSeatsAmount(Number(e.target.value))}
+                        className={styles.seats_amount_input}
+                    />
+                    <button
+                        type='submit'
+                        className={styles.seats_amount_button}
+                        disabled={isInputted}
+                        onClick={clickedSeatsAmount}
+                    >
+                        確定
+                    </button>
+                </div>
             </div>
             {isInputted && (
                 <div
                     className={`${styles.wh_length_container} ${isInputted ? styles.wh_length_container_visible : ''}`}
                 >
                     <div className={styles.seats_amount_text}>縦横幅を入力してください</div>
-                    <div className={styles.wh_err_msg}>{errMsg}</div>
                     <div className={styles.wh_length_text} style={{ top: '45%' }}>
                         縦
                     </div>
@@ -235,6 +254,7 @@ export default function Index() {
                     >
                         確定
                     </button>
+                    <div className={styles.wh_err_msg}>{errMsg}</div>
                 </div>
             )}
             <div className={styles.seats_container} style={{ display: isConfirmed ? 'block' : 'none' }}>
