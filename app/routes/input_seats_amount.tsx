@@ -1,13 +1,14 @@
 import { Box } from '@chakra-ui/react'
 import type { MetaFunction, LoaderFunctionArgs } from '@remix-run/node'
 import { redirect } from '@remix-run/node'
-import { json,useLoaderData, Form, useFetcher } from '@remix-run/react'
+import { json, useLoaderData, Form, useFetcher } from '@remix-run/react'
 import { create } from 'framer-motion/client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { SeatArrangement } from '~/original-components'
 import Seat from '~/original-components/Seat'
 import { requireUserSession } from './assets/admin_auth.server'
 import styles from '~/styles/input_seats_amount.module.css'
+import { Seat as SeatType } from '~/model/model'
 
 export const meta: MetaFunction = () => {
     return [{ title: 'New Remix App' }, { name: 'description', content: 'Welcome to Remix!' }]
@@ -17,10 +18,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     // sessionからデータを取り出す
     const data = await requireUserSession(request)
     const usrId = data.usrId
-    
+
     return json({ usrId: usrId })
 }
-
 
 export default function Index() {
     //clientでやってほしいので
@@ -30,15 +30,24 @@ export default function Index() {
     const [width, setWidth] = useState<number>(0)
     const [errMsg, setErrMsg] = useState('')
     const [isConfirmed, setIsConfirmed] = useState(false)
-    const [SeatsArray, setSeatsArray] = useState<Array<Array<number | boolean>>>([])
+    const [SeatsArray, setSeatsArray] = useState<Array<SeatType[]>>([])
     const fetcher = useFetcher()
-    const admin = useLoaderData() as {usrId:string}
+    const admin = useLoaderData() as { usrId: string }
     /*************  ✨ Codeium Command ⭐  *************/
     /**
      * input seats amount and show the second container
      * @returns {void}
      */
     /******  3d251e3f-7e9e-4df8-840c-b57c63aa7efc  *******/
+
+    const createSeatArray = (row: number, column: number) => {
+        return Array.from({ length: row }, () => Array.from({ length: column }, () => true))
+    }
+
+    useEffect(() => {
+        setSeatsArray(createSeatArray(height, width))
+    }, [height, width])
+
     function clickedSeatsAmount() {
         // 一応確認
         console.log(isInputted)
@@ -51,13 +60,12 @@ export default function Index() {
         setWidth(Math.floor(sqrt))
     }
 
-    function clickedWHAmount() {
-        // 一応確認
-        console.log(isInputted)
-        // 二つ目のコンテナを表示する
-        setIsConfirmed(true)
-    }
-
+    /*************  ✨ Codeium Command ⭐  *************/
+    /**
+     * バリデーション
+     * @returns {boolean} バリデーション結果
+     */
+    /******  4a1d2618-5589-4759-82a3-c8f9b7828716  *******/
     function validateInputs() {
         if (height * width < seatsAmount) {
             setErrMsg(
@@ -79,7 +87,7 @@ export default function Index() {
     //     form.action = `/management_classes`
     // }
 
-    const handleValueChange = (newValue: Array<Array<number | boolean>>) => {
+    const handleValueChange = (newValue: Array<Array<SeatType>>) => {
         console.log('newValue:', newValue)
         setSeatsArray(newValue)
     }
@@ -98,12 +106,12 @@ export default function Index() {
                 { classId: String(id), classInfo: JSON.stringify(SeatsArray) },
                 { method: 'post', action: `/class_dat`, encType: 'application/json' },
             )
-            const formData = new FormData();
-            formData.append("usr_id", admin.usrId);
-            formData.append("class_id", id.toString());
-            formData.append("function", "addClass");
+            const formData = new FormData()
+            formData.append('usr_id', admin.usrId)
+            formData.append('class_id', id.toString())
+            formData.append('function', 'addClass')
 
-            fetcher.submit(formData, { method: 'post', action: '/admin_dat' });
+            fetcher.submit(formData, { method: 'post', action: '/admin_dat' })
             // event.currentTarget.action = `/management_classes`
         } else {
             console.log('有効な座席を入力してください')
@@ -116,6 +124,23 @@ export default function Index() {
             // キャンセル
             event.preventDefault()
         }
+    }
+
+    const onClick = (rowCountIndex: number, columnIndex: number) => {
+        setSeatsArray((prevSeats) => {
+            const newSeats = prevSeats.map((row, rowIndex) =>
+                row.map((seat, colIndex) => (rowIndex === rowCountIndex && colIndex === columnIndex ? !seat : seat)),
+            )
+            return newSeats
+        })
+    }
+
+    const room = {
+        row: height,
+        column: width,
+        seatAmount: seatsAmount,
+        finished: false,
+        seats: SeatsArray,
     }
 
     return (
@@ -180,7 +205,9 @@ export default function Index() {
                         type='submit'
                         className={styles.wh_length_button}
                         disabled={isConfirmed}
-                        onClick={clickedWHAmount}
+                        onClick={() => {
+                            setIsConfirmed(true)
+                        }}
                     >
                         確定
                     </button>
@@ -190,7 +217,7 @@ export default function Index() {
                 <div className={styles.seats_amount_text}>使用しない座席をクリックで選択してください</div>
                 <div className={styles.seats}>
                     <Box className={`mx-auto ${styles.seats_boxes}`}>
-                        <SeatArrangement row={height} col={width} handleValueChange={handleValueChange} />
+                        <SeatArrangement room={room} onClick={onClick} />
                     </Box>
                 </div>
 
