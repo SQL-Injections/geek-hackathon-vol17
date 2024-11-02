@@ -20,11 +20,7 @@ export async function isValidUsr(userId: string, classId: string) {
 }
 
 // createStudent
-export async function pushUsr(user: Student, classId: string) {
-    if (!user.id || !classId) {
-        return false
-    }
-
-    studentDat[classId] = [...studentDat[classId], user]
+export async function pushUsr(user: Array<Student>, classId: string) {
+    studentDat[classId] = user
     return true
 }

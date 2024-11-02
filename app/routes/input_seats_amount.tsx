@@ -41,7 +41,7 @@ export default function Index() {
     /******  3d251e3f-7e9e-4df8-840c-b57c63aa7efc  *******/
     function clickedSeatsAmount() {
         // 一応確認
-        console.log(isInputted)
+        console.log("isinputted:" + isInputted)
         // 二つ目のコンテナを表示する
         setIsInputted(true)
         //いい感じにheightとwidthの初期値を決定する
@@ -94,8 +94,9 @@ export default function Index() {
         if (SeatsArray.flat().filter((seat) => seat).length === seatsAmount) {
             console.log('クラス作成')
             //クラスを作成する
+            const roomDat = {row:height, column:width, seatAmount:seatsAmount, isConfirmed:false, seats:SeatsArray}
             fetcher.submit(
-                { classId: String(id), classInfo: JSON.stringify(SeatsArray) },
+                { classId: String(id), classInfo: JSON.stringify(roomDat) },
                 { method: 'post', action: `/class_dat`, encType: 'application/json' },
             )
             const formData = new FormData();
@@ -104,6 +105,19 @@ export default function Index() {
             formData.append("function", "addClass");
 
             fetcher.submit(formData, { method: 'post', action: '/admin_dat' });
+
+            const student_ids = []
+            for (let i = 0; i < seatsAmount; i++) {
+                student_ids.push({id:(Math.floor(Math.random()) * 1000).toString(),name:""})
+            }
+
+            fetcher.submit(
+                {
+                    classId: id.toString()
+                    , student_ids: JSON.stringify(student_ids)
+                }
+                , { method: 'post', action: '/student_dat', encType: 'application/json' },
+            )
             // event.currentTarget.action = `/management_classes`
         } else {
             console.log('有効な座席を入力してください')
