@@ -1,11 +1,13 @@
-import { json, useLoaderData, Link } from '@remix-run/react'
+import { json, useLoaderData, Link ,useFetcher} from '@remix-run/react'
 import { getClassList } from '../assets/admin_dat'
 import type { LoaderFunctionArgs } from '@remix-run/node'
 import { Box, Card, CardBody, Container, Heading, SimpleGrid } from '@chakra-ui/react'
 import { Button } from '../../components/ui/button'
 import { Class } from '~/model/model'
 import { requireUserSession } from '../assets/student_auth.server'
-import { idToClassSeats } from '../assets/class_dat'
+import { useEffect } from "react";
+
+
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
     // sessionからデータを取り出す
@@ -13,14 +15,54 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     const { usrId, classId, usrName } = data
     
     const classList = getClassList(usrId)
+    const class_id = data.classId
     return json({ classes: classList })
 }
 
-// Todo 一覧画面でクラス名を編集 UI変更
 
 export default function Index() {
-    const { classes } = useLoaderData<typeof loader>()
 
+    const fetcher = useFetcher()
+    function DownloadCsv(){
+        console.log("DownloadCsv")
+        let classId = "1"//クラスID仮置き
+    
+        const formData = new FormData()
+        formData.append("class_id",classId)
+        console.log(formData)
+    
+        console.log("fetcher定義")
+        fetcher.submit(formData, { method: 'post', action: '/csv_download' });
+    }
+    // Todo 一覧画面でクラス名を編集 UI変更
+    useEffect(() => {
+        // fetcherのレスポンスをチェック
+        if (fetcher.data) {
+            console.log("Fetcher data:", fetcher.data);
+            console.log(fetcher.data);
+            // バリデーションが成功した場合のみフォーム送信
+            if (fetcher.data) {
+                console.log("成功しました．CSVファイルゲット");
+                // Blobを作成し、URLを生成
+                const blob = new Blob([fetcher.data], { type: 'text/csv;charset=cp932;' });
+                const url = URL.createObjectURL(blob);
+
+                // 一時的なリンクを作成してクリック
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'data.csv'; // ダウンロードするファイル名
+                document.body.appendChild(a);
+                a.click();
+
+                // リンクを削除
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url); // メモリ解放
+            } else {
+                console.log("失敗");
+            }
+        }
+    }, [fetcher.data]);
+    const { classes } = useLoaderData<typeof loader>()
     return (
         <Container maxW='container.xl' py={8}>
             <Box
@@ -64,6 +106,7 @@ export default function Index() {
                     </Link>
                 ))}
             </SimpleGrid>
+                <button onClick={DownloadCsv}>CSVダウンロード</button>
 
             <Button variant="surface"><a href={`/input_seats_amount`}>新規クラス追加</a></Button>
         </Container>
