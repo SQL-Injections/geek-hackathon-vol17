@@ -1,8 +1,8 @@
 import { json, useLoaderData, Link } from '@remix-run/react'
-import { useState } from 'react'
 import { getClassList } from '../assets/admin_dat'
 import type { LoaderFunctionArgs } from '@remix-run/node'
 import { Box, Card, CardBody, Container, Heading, SimpleGrid } from '@chakra-ui/react'
+import { Button } from '../../components/ui/button'
 import { Class } from '~/model/model'
 import { requireUserSession } from '../assets/student_auth.server'
 import { idToClassSeats } from '../assets/class_dat'
@@ -64,6 +64,8 @@ export default function Index() {
                     </Link>
                 ))}
             </SimpleGrid>
+
+            <Button variant="surface"><a href={`/input_seats_amount`}>新規クラス追加</a></Button>
         </Container>
     )
 }
