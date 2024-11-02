@@ -26,7 +26,6 @@ export default function Index() {
     // とりあえずクエリを取り出す
     const fetch: any = useLoaderData()
     const navigate = useNavigate()
-    console.log('query.seatsDat', fetch.seatsDat, fetch.usrId, fetch.usrName)
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         console.log('submit', '\n\n\n\n')

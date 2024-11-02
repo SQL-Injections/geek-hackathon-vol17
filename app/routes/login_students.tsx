@@ -39,13 +39,23 @@ export default function Index() {
     function clickedLogin() {
         // 一応確認
         // 二つ目のコンテナを表示する
-        if (idToClassSeats(classId)) {
-            // もし、idが正しいなら
-            // 二つ目のコンテナを表示する
-            setIsInputted(true)
-        }
+        fetcher.load("/class_dat?class_id=" + classId)
     }
 
+    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault() // すぐに送信せず待機
+    }
+
+    useEffect(() => {
+        // fetcherのレスポンスをチェック
+        console.log("fetcher.data", fetcher.data)
+        if (fetcher.data) {
+            if (fetcher.data) {
+                setIsInputted(true)
+                
+            }
+        }
+    }, [fetcher.data])
     return (
         <>
             <Form method="post">
