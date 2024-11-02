@@ -71,7 +71,7 @@ const SeatArrangement = ({
                         let text = (rowIndex * columnCount + colIndex + 1).toString()
                         if (Array.isArray(seat) && seat.length > 0) {
                             // 複数の学生名をカンマ区切りで連結
-                            text = seat.map((student) => student.displayName).join(', ')
+                            text = seat.map((student) => student.displayName ? student.displayName : student.id).join(', ')
                         }
 
                         return (
