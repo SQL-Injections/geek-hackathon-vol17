@@ -1,11 +1,18 @@
 import { json, useLoaderData, Link } from '@remix-run/react'
 import { useState } from 'react'
 import { getClassList } from '../assets/admin_dat'
+import type { LoaderFunctionArgs } from '@remix-run/node'
 import { Box, Card, CardBody, Container, Heading, SimpleGrid } from '@chakra-ui/react'
 import { Class } from '~/model/model'
+import { requireUserSession } from '../assets/student_auth.server'
+import { idToClassSeats } from '../assets/class_dat'
 
-export const loader = async () => {
-    const classList = getClassList('admin')
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+    // sessionからデータを取り出す
+    const data = await requireUserSession(request)
+    const { usrId, classId, usrName } = data
+    
+    const classList = getClassList(usrId)
     return json({ classes: classList })
 }
 
