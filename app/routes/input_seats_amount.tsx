@@ -55,6 +55,9 @@ export default function Index() {
         // 一応確認
         console.log(isInputted)
         // 二つ目のコンテナを表示する
+        if(!validateInputs()){
+            return
+        }
         setIsConfirmed(true)
     }
 
@@ -165,7 +168,6 @@ export default function Index() {
                     className={`${styles.wh_length_container} ${isInputted ? styles.wh_length_container_visible : ''}`}
                 >
                     <div className={styles.seats_amount_text}>縦横幅を入力してください</div>
-                    <div className={styles.wh_err_msg}>{errMsg}</div>
                     <div className={styles.wh_length_text} style={{ top: '45%' }}>
                         縦
                     </div>
@@ -202,6 +204,7 @@ export default function Index() {
                     >
                         確定
                     </button>
+                    <div className={styles.wh_err_msg}>{errMsg}</div>
                 </div>
             )}
             <div className={styles.seats_container} style={{ display: isConfirmed ? 'block' : 'none' }}>
