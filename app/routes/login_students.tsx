@@ -3,7 +3,6 @@ import type { MetaFunction, LoaderFunctionArgs } from '@remix-run/node'
 import { Form, useFetcher } from '@remix-run/react'
 import styles from '~/styles/login_students.module.css'
 import { idToClassSeats } from '~/routes/assets/class_dat'
-import { isValidUsr, pushUsr } from './assets/student_dat'
 import { useState, useEffect } from 'react'
 import { login } from "./assets/student_login"
 
@@ -46,28 +45,6 @@ export default function Index() {
             setIsInputted(true)
         }
     }
-
-    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault() // すぐに送信せず待機
-    }
-
-    useEffect(() => {
-        // fetcherのレスポンスをチェック
-        if (fetcher.data) {
-            console.log('Fetcher data:', fetcher.data)
-
-            // バリデーションが成功した場合のみフォーム送信
-            // if (fetcher.data.isValid) {
-            if (fetcher.data) {
-                console.log('バリデーション成功: ユーザーが存在します')
-                const form = document.querySelector('form') as HTMLFormElement
-                form.action = `/write_my_seats?class_id=${classId}&usr_id=${usrId}&usr_name=${usrName}`
-                form.submit() // バリデーションに通った後で送信
-            } else {
-                console.log('バリデーション失敗: ユーザーが存在しません')
-            }
-        }
-    }, [fetcher.data])
 
     return (
         <>
