@@ -56,6 +56,9 @@ export function modifyClass(classId: string, usrId: string, usrName: string, x: 
     if (!isValidUsr(usrId, classId)) {
         return false
     }
+    if (Classobj[classId].finished) {
+        return false
+    }
     while (blocked) {
         // blocked
     }
@@ -76,11 +79,10 @@ export function modifyClass(classId: string, usrId: string, usrName: string, x: 
 
                     // 削除した結果その場所を選択している人がいないなら書き換え(別にset([])のままでも動きはする)
 
+                    Classobj[classId].seats[i][j] = set
                     if (set.length === 0) {
                         Classobj[classId].seats[i][j] = true
                     }
-
-                    Classobj[classId].seats[i][j] = set
                 }
             }
         }
@@ -98,4 +100,15 @@ export function modifyClass(classId: string, usrId: string, usrName: string, x: 
     // 処理が終了したので解除
     blocked = false
     return Classobj[classId].seats
+}
+
+export const toggleFinished = async (classId: string) => {
+    Classobj[classId].finished = !Classobj[classId].finished
+    return Classobj[classId].finished
+}
+
+export const handleFinish = async (classId: string, room: Room) => {
+
+    Classobj[classId] = room
+    return Classobj[classId]
 }
