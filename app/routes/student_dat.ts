@@ -4,6 +4,7 @@ import { requireUserSession } from "./assets/student_auth.server"
 
 // Validate class
 export async function loader({ request }: any) {
+    
 }
 
 
