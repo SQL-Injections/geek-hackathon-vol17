@@ -1,14 +1,13 @@
 import { Box } from '@chakra-ui/react'
 import type { MetaFunction, LoaderFunctionArgs } from '@remix-run/node'
 import { redirect } from '@remix-run/node'
-import { json, useLoaderData, Form, useFetcher } from '@remix-run/react'
+import { json,useLoaderData, Form, useFetcher } from '@remix-run/react'
 import { create } from 'framer-motion/client'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { SeatArrangement } from '~/original-components'
 import Seat from '~/original-components/Seat'
 import { requireUserSession } from './assets/admin_auth.server'
 import styles from '~/styles/input_seats_amount.module.css'
-import { Seat as SeatType } from '~/model/model'
 
 export const meta: MetaFunction = () => {
     return [{ title: 'New Remix App' }, { name: 'description', content: 'Welcome to Remix!' }]
@@ -18,9 +17,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     // sessionからデータを取り出す
     const data = await requireUserSession(request)
     const usrId = data.usrId
-
+    
     return json({ usrId: usrId })
 }
+
 
 export default function Index() {
     //clientでやってほしいので
@@ -31,27 +31,18 @@ export default function Index() {
     const [width, setWidth] = useState<number>(0)
     const [errMsg, setErrMsg] = useState('')
     const [isConfirmed, setIsConfirmed] = useState(false)
-    const [SeatsArray, setSeatsArray] = useState<Array<SeatType[]>>([])
+    const [SeatsArray, setSeatsArray] = useState<Array<Array<number | boolean>>>([])
     const fetcher = useFetcher()
-    const admin = useLoaderData() as { usrId: string }
+    const admin = useLoaderData() as {usrId:string}
     /*************  ✨ Codeium Command ⭐  *************/
     /**
      * input seats amount and show the second container
      * @returns {void}
      */
     /******  3d251e3f-7e9e-4df8-840c-b57c63aa7efc  *******/
-
-    const createSeatArray = (row: number, column: number) => {
-        return Array.from({ length: row }, () => Array.from({ length: column }, () => true))
-    }
-
-    useEffect(() => {
-        setSeatsArray(createSeatArray(height, width))
-    }, [height, width])
-
     function clickedSeatsAmount() {
         // 一応確認
-        console.log('isinputted:' + isInputted)
+        console.log("isinputted:" + isInputted)
         // 二つ目のコンテナを表示する
         setIsInputted(true)
         //いい感じにheightとwidthの初期値を決定する
@@ -92,7 +83,7 @@ export default function Index() {
     //     form.action = `/management_classes`
     // }
 
-    const handleValueChange = (newValue: Array<Array<SeatType>>) => {
+    const handleValueChange = (newValue: Array<Array<number | boolean>>) => {
         console.log('newValue:', newValue)
         setSeatsArray(newValue)
     }
@@ -107,41 +98,34 @@ export default function Index() {
         if (SeatsArray.flat().filter((seat) => seat).length === seatsAmount) {
             console.log('クラス作成')
             //クラスを作成する
-            const roomDat = {
-                row: height,
-                column: width,
-                seatAmount: seatsAmount,
-                isFinished: false,
-                seats: SeatsArray,
-            }
+            const roomDat = {row:height, column:width, seatAmount:seatsAmount, isConfirmed:false, seats:SeatsArray}
             fetcher.submit(
                 { classId: String(id), classInfo: JSON.stringify(roomDat) },
                 { method: 'post', action: `/class_dat`, encType: 'application/json' },
             )
+            const formData = new FormData();
+            formData.append("usr_id", admin.usrId);
+            formData.append("class_id", id.toString());
+            formData.append("class_name", className.toString());
+            formData.append("function", "addClass");
 
-            const formData = new FormData()
-            formData.append("usr_id", admin.usrId)
-            formData.append("class_id", id.toString())
-            formData.append("class_name", className.toString())
-            formData.append("function", "addClass")
-
-            fetcher.submit(formData, { method: 'post', action: '/admin_dat' })
+            fetcher.submit(formData, { method: 'post', action: '/admin_dat' });
 
             const student_ids = []
             const id_set = [...Array(1000)].map((_, i) => i)
             for (let i = 0; i < seatsAmount; i++) {
-                let rand = Math.floor(Math.random() * id_set.length)
+                let rand = Math.floor(Math.random() * (id_set.length))
                 if (rand === id_set.length) rand = id_set.length - 1
                 const value = id_set.splice(rand, 1)
-                student_ids.push({ id: value.toString(), name: '' })
+                student_ids.push({id:value.toString(),name:""})
             }
 
             fetcher.submit(
                 {
-                    classId: id.toString(),
-                    student_ids: JSON.stringify(student_ids),
-                },
-                { method: 'post', action: '/student_dat', encType: 'application/json' },
+                    classId: id.toString()
+                    , student_ids: JSON.stringify(student_ids)
+                }
+                , { method: 'post', action: '/student_dat', encType: 'application/json' },
             )
             // event.currentTarget.action = `/management_classes`
         } else {
@@ -155,23 +139,6 @@ export default function Index() {
             // キャンセル
             event.preventDefault()
         }
-    }
-
-    const onClick = (rowCountIndex: number, columnIndex: number) => {
-        setSeatsArray((prevSeats) => {
-            const newSeats = prevSeats.map((row, rowIndex) =>
-                row.map((seat, colIndex) => (rowIndex === rowCountIndex && colIndex === columnIndex ? !seat : seat)),
-            )
-            return newSeats
-        })
-    }
-
-    const room = {
-        row: height,
-        column: width,
-        seatAmount: seatsAmount,
-        finished: false,
-        seats: SeatsArray,
     }
 
     return (
@@ -248,9 +215,7 @@ export default function Index() {
                         type='submit'
                         className={styles.wh_length_button}
                         disabled={isConfirmed}
-                        onClick={() => {
-                            setIsConfirmed(true)
-                        }}
+                        onClick={clickedWHAmount}
                     >
                         確定
                     </button>
@@ -261,7 +226,7 @@ export default function Index() {
                 <div className={styles.seats_amount_text}>使用しない座席をクリックで選択してください</div>
                 <div className={styles.seats}>
                     <Box className={`mx-auto ${styles.seats_boxes}`}>
-                        <SeatArrangement room={room} onClick={onClick} />
+                        <SeatArrangement row={height} col={width} handleValueChange={handleValueChange} />
                     </Box>
                 </div>
 

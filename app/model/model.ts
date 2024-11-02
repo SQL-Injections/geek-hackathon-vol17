@@ -37,7 +37,7 @@ export type Room = {
     row: number // 縦
     column: number // 横
     seatAmount: number
-    finished?: boolean
+    isConfirmed?: boolean
     seats: Array<Array<Seat>>
 }
 
