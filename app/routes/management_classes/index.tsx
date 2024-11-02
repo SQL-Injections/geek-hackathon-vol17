@@ -5,7 +5,7 @@ import { Box, Card, CardBody, Container, Heading, SimpleGrid } from '@chakra-ui/
 import { Button } from '../../components/ui/button'
 import { Class } from '~/model/model'
 import { requireUserSession } from '../assets/student_auth.server'
-import { idToClassSeats } from '../assets/class_dat'
+
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
     // sessionからデータを取り出す
