@@ -1,7 +1,7 @@
 import { json, useLoaderData, Link } from '@remix-run/react'
-import { useState } from 'react'
 import { getClassList } from '../assets/admin_dat'
 import { Box, Card, CardBody, Container, Heading, SimpleGrid } from '@chakra-ui/react'
+import { Button } from '../../components/ui/button'
 import { Class } from '~/model/model'
 
 export const loader = async () => {
@@ -57,6 +57,8 @@ export default function Index() {
                     </Link>
                 ))}
             </SimpleGrid>
+
+            <Button variant="surface"><a href={`/input_seats_amount`}>新規クラス追加</a></Button>
         </Container>
     )
 }
