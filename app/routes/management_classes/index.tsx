@@ -101,6 +101,8 @@ export default function Index() {
                         >
                             <Heading size='md' color='blue.800'>
                                 {cls.name}
+                                <br /> 
+                                classId:{cls.id}
                             </Heading>
                         </Box>
                     </Link>

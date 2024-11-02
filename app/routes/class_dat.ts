@@ -1,5 +1,5 @@
 import { json } from '@remix-run/node'
-import { idToClassSeats, pushIdAndClass, modifyClass, toggleFinished, handleFinish } from './assets/class_dat' // Assume these are your server-side utility functions
+import { assignSeats,idToClassSeats, pushIdAndClass, modifyClass, toggleFinished, handleFinish } from './assets/class_dat' // Assume these are your server-side utility functions
 import { requireUserSession } from './assets/student_auth.server'
 
 // Validate class
@@ -7,7 +7,6 @@ export async function loader({ request }: any) {
     const url = new URL(request.url)
     //　クラスID　String型にします
     const classId = String(url.searchParams.get('class_id'))
-    // console.log(classId);
     const isValid = await idToClassSeats(classId)
     return isValid === undefined ? false : isValid
 }
@@ -38,6 +37,9 @@ export async function action({ request }: any) {
         case 'handleFinishedSeats': {
             const room = formData.room
             return await handleFinish(classId, room)
+        }
+        case 'assignSeats' : {
+            return await assignSeats(classId)
         }
     }
     // console.log(classId);
