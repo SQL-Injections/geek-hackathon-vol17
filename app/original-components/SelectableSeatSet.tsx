@@ -69,15 +69,18 @@ const SelectableSeatSet: React.FC<{ user: Student; classId: string; defaultSeats
                             //その場所を誰が選択しているかを返す
                             key={index}
                             margin={seatMargin}
-                            onClick={() => (enableSeats[index] ? modifySeats(index) : null)}
+                            onClick={() => {(
+                                enableSeats[index] ? modifySeats(index) : null
+                                )}
+                            }
                         >
                             <Seat
                                 text={
                                     typeof enableSeats[index] == 'boolean'
                                         ? ''
                                         : Array.from(enableSeats[index])
-                                              .map((seat) => `${seat.displayName}`)
-                                              .join(', ')
+                                            .map((seat) => `${seat.displayName}`)
+                                            .join(', ')
                                 }
                                 isDisabled={!enableSeats[index]}
                             />

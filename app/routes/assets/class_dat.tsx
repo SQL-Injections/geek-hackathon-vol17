@@ -56,6 +56,9 @@ export function modifyClass(classId: string, usrId: string, usrName: string, x: 
     if (!isValidUsr(usrId, classId)) {
         return false
     }
+    if (Classobj[classId].finished) {
+        return false
+    }
     while (blocked) {
         // blocked
     }
@@ -98,4 +101,13 @@ export function modifyClass(classId: string, usrId: string, usrName: string, x: 
     // 処理が終了したので解除
     blocked = false
     return Classobj[classId].seats
+}
+
+export const toggleFinished = (classId: string) => {
+    Classobj[classId].finished = !Classobj[classId].finished
+}
+
+export const confirmSeats = (classId: string, room: Room) => {
+    Classobj[classId] = room
+    return Classobj[classId]
 }
