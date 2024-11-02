@@ -9,7 +9,7 @@ export async function loader({ request }: any) {
     const classId = String(url.searchParams.get('class_id'))
     // console.log(classId);
     const isValid = await idToClassSeats(classId)
-    return json({ isValid })
+    return isValid === undefined ? false : isValid
 }
 
 // Add Class
