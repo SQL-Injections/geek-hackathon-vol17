@@ -4,7 +4,10 @@ import { Class, Manager } from '~/model/model'
 export type ClassList = {
     [managerId: string]: Array<Class>
 }
-export let adminList: Manager[] = []
+export let adminList: Manager[] = [{
+    id:"test",
+    password:"test"
+}]
 
 export let classList: ClassList = {}
 
@@ -12,11 +15,10 @@ export function isValidUsr(user: Manager) {
     if (!user.id || !user.password) {
         return false
     }
-
     // 変更加わると思うから、一つにまとめる。
     // ユーザがいなければ
     //パスワードが一致するなら
-     return adminList.some((manager) => manager.id === user.id && manager.password === user.password) 
+    return adminList.some((manager) => manager.id === user.id && manager.password === user.password) 
 }
 
 // createUser
