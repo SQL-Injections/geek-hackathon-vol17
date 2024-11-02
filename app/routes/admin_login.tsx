@@ -4,6 +4,8 @@ import { Form, useFetcher } from "@remix-run/react";
 
 import styles from "~/styles/admin_login.module.css";
 import { login } from "./assets/admin_login"
+import { useActionData } from "@remix-run/react";
+
 
 import { useState, useEffect, useId } from "react";
 
@@ -23,7 +25,8 @@ export async function action({ request }: any) {
         return await login(credentials);
     } catch (error: any) {
         if (error.status === 401) {
-            return { credentials: error.message };
+            console.log("userいないよ")
+            return { error: error.message };
         }
         if (error.status === 422) {
             return { credentials: error.message };
@@ -32,13 +35,13 @@ export async function action({ request }: any) {
 }
 
 export default function Index() {
+    const actionData = useActionData();
     const [usrId, setUsrId] = useState<string>();
     const [password, setPassword] = useState<string>();
     const fetcher = useFetcher();
 
-
     const [isVisible, setIsVisible] = useState(false);
-
+    
     return(
         <>
         <Form method="post">
@@ -53,12 +56,12 @@ export default function Index() {
                 </div>
             </div>
         </Form>
-            
-            {isVisible && <div className={styles.error_container}>
-                <div>
-                <p className={styles.error_mes}>管理者用idかパスワードが間違っています</p>
+                
+            {actionData?.error && (
+                <div className={styles.error_container}>
+                    <p className={styles.error_mes}>{actionData.error}</p>
                 </div>
-            </div>}
+            )}
         </>
     );
 }

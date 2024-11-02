@@ -4,7 +4,10 @@ import { Class, Manager } from '~/model/model'
 export type ClassList = {
     [managerId: string]: Array<Class>
 }
-export let adminList: Manager[] = []
+export let adminList: Manager[] = [{
+    id:"test",
+    password:"test"
+}]
 
 export let classList: ClassList = {}
 

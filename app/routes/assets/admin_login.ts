@@ -14,7 +14,7 @@ export async function login({
     const existingUser = await isValidUsr(UserObj);
     if (!existingUser) {
         const error: any = new Error(
-            "id又はpasswordに誤りがあります。"
+            "管理者用idかパスワードが間違っています"
         );
         error.status = 401;
         throw error;
