@@ -3,10 +3,10 @@ import { Student } from '~/model/model'
 export type ClassStudents = {
     [classId: string]: Array<Student>
 }
-const studentDat: ClassStudents = {
+export const studentDat: ClassStudents = {
     '1': [
         {
-            id: '1',
+            id: 'id',
             displayName: '山田太郎',
         },
     ],
