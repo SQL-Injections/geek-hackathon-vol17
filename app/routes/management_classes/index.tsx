@@ -40,7 +40,7 @@ export default function Index() {
             <SimpleGrid columns={{ base: 3, md: 5 }} gridGap={4}>
                 {classes.map((cls: Class, index: number) => (
                     // とりあえず、className
-                    <Link to={`/input_seats_amount?${cls.name}`} key={index} style={{ textDecoration: 'none' }}>
+                    <Link to={`/teacher_manage_seats/${cls.id}`} key={index} style={{ textDecoration: 'none' }}>
                         <Box
                             height='10vh'
                             display='flex'
