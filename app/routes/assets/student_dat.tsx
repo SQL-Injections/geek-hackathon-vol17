@@ -4,10 +4,12 @@ export type ClassStudents = {
     [classId: string]: Array<Student>
 }
 const studentDat: ClassStudents = {
-    '1': [{
-        id: '1',
-        displayName: '山田太郎'
-    }]
+    '1': [
+        {
+            id: '1',
+            displayName: '山田太郎',
+        },
+    ],
 }
 
 export async function isValidUsr(userId: string, classId: string) {
@@ -27,4 +29,8 @@ export async function pushUsr(user: Student, classId: string) {
 
     studentDat[classId] = [...studentDat[classId], user]
     return true
+}
+
+export const getStudentList = async (classId: string) => {
+    return studentDat[classId]
 }

@@ -1,6 +1,6 @@
-import { json } from "@remix-run/node"
-import { idToClassSeats, pushIdAndClass, modifyClass } from "./assets/class_dat" // Assume these are your server-side utility functions
-import { requireUserSession } from "./assets/student_auth.server"
+import { json } from '@remix-run/node'
+import { idToClassSeats, pushIdAndClass, modifyClass, toggleFinished } from './assets/class_dat' // Assume these are your server-side utility functions
+import { requireUserSession } from './assets/student_auth.server'
 
 // Validate class
 export async function loader({ request }: any) {
@@ -12,11 +12,10 @@ export async function loader({ request }: any) {
     return json({ isValid })
 }
 
-
 // Add Class
 export async function action({ request }: any) {
     const query = await requireUserSession(request)
-    if (!query){
+    if (!query) {
         return json({ notFoundSession: false })
     }
     const formData = await request.json()
@@ -25,12 +24,19 @@ export async function action({ request }: any) {
     // Todo : この辺りの処理はidとパスワードを求めるべき
     const func = String(formData.function)
 
-    if (func === 'modifyClass') {
-        const x = Number(formData.x)
-        const y = Number(formData.y)
-        const usrName = formData.user.displayName
-        const usrId = formData.user.id
-        return await modifyClass(classId, usrId, usrName, x, y)
+    switch (func) {
+        case 'modifyClass': {
+            const x = Number(formData.x)
+            const y = Number(formData.y)
+            const usrName = formData.user.displayName
+            const usrId = formData.user.id
+            return await modifyClass(classId, usrId, usrName, x, y)
+        }
+        case 'toggleFinished': {
+            toggleFinished(classId)
+
+            return
+        }
     }
     // console.log(classId);
     const classInfo = JSON.parse(formData.classInfo)

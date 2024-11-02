@@ -99,3 +99,12 @@ export function modifyClass(classId: string, usrId: string, usrName: string, x: 
     blocked = false
     return Classobj[classId].seats
 }
+
+export const toggleFinished = (classId: string) => {
+    Classobj[classId].finished = !Classobj[classId].finished
+}
+
+export const confirmSeats = (classId: string, room: Room) => {
+    Classobj[classId] = room
+    return Classobj[classId]
+}
