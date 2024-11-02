@@ -79,11 +79,10 @@ export function modifyClass(classId: string, usrId: string, usrName: string, x: 
 
                     // 削除した結果その場所を選択している人がいないなら書き換え(別にset([])のままでも動きはする)
 
+                    Classobj[classId].seats[i][j] = set
                     if (set.length === 0) {
                         Classobj[classId].seats[i][j] = true
                     }
-
-                    Classobj[classId].seats[i][j] = set
                 }
             }
         }
@@ -103,11 +102,13 @@ export function modifyClass(classId: string, usrId: string, usrName: string, x: 
     return Classobj[classId].seats
 }
 
-export const toggleFinished = (classId: string) => {
+export const toggleFinished = async (classId: string) => {
     Classobj[classId].finished = !Classobj[classId].finished
+    return Classobj[classId].finished
 }
 
-export const confirmSeats = (classId: string, room: Room) => {
+export const handleFinish = async (classId: string, room: Room) => {
+
     Classobj[classId] = room
     return Classobj[classId]
 }
