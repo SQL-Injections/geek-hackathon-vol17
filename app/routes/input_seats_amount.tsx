@@ -25,6 +25,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function Index() {
     //clientでやってほしいので
     const [seatsAmount, setSeatsAmount] = useState(1)
+    const [className, setClassName] =  useState('')
     const [isInputted, setIsInputted] = useState(false)
     const [height, setHeight] = useState<number>(0)
     const [width, setWidth] = useState<number>(0)
@@ -102,6 +103,7 @@ export default function Index() {
             const formData = new FormData();
             formData.append("usr_id", admin.usrId);
             formData.append("class_id", id.toString());
+            formData.append("class_name", className.toString());
             formData.append("function", "addClass");
 
             fetcher.submit(formData, { method: 'post', action: '/admin_dat' });
@@ -139,26 +141,39 @@ export default function Index() {
     return (
         <>
             <div className={styles.seats_amount_container}>
-                <div className={styles.seats_amount_text}>席数を入力してください</div>
-                <input
-                    type='number'
-                    name='seats_amount'
-                    id='seats_amount'
-                    min='1'
-                    defaultValue={seatsAmount}
-                    disabled={isInputted}
-                    onChange={(e) => setSeatsAmount(Number(e.target.value))}
-                    className={styles.seats_amount_input}
-                />
-                <br />
-                <button
-                    type='submit'
-                    className={styles.seats_amount_button}
-                    disabled={isInputted}
-                    onClick={clickedSeatsAmount}
-                >
-                    確定
-                </button>
+                <div className={styles.seats_attribute}>
+                    <div className={styles.seats_amount_text}>クラスの名前を入力してください</div>
+                    <input
+                        type='text'
+                        name='class_name'
+                        id='class_name'
+                        min='1'
+                        defaultValue={seatsAmount}
+                        disabled={isInputted}
+                        onChange={(e) => setClassName(String(e.target.value))}
+                        className={styles.seats_amount_input}
+                    />
+                    <br />
+                    <div className={styles.seats_amount_text}>クラスの人数を入力してください</div>
+                    <input
+                        type='number'
+                        name='seats_amount'
+                        id='seats_amount'
+                        min='1'
+                        defaultValue={seatsAmount}
+                        disabled={isInputted}
+                        onChange={(e) => setSeatsAmount(Number(e.target.value))}
+                        className={styles.seats_amount_input}
+                    />
+                    <button
+                        type='submit'
+                        className={styles.seats_amount_button}
+                        disabled={isInputted}
+                        onClick={clickedSeatsAmount}
+                    >
+                        確定
+                    </button>
+                </div>
             </div>
             {isInputted && (
                 <div

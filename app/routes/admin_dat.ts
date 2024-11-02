@@ -20,6 +20,8 @@ export async function action({ request }: any) {
     const usrId = formData.get('usr_id')?.toString()
     const classId = formData.get('class_id')?.toString()
     const password = formData.get('password')?.toString()
+    //className 追加
+    const className = formData.get('class_name')?.toString()
     const func = formData.get('function')
 
     if (func === 'pushUsr') {
@@ -32,7 +34,7 @@ export async function action({ request }: any) {
     }
     
     if (func === 'addClass') {
-        const newOObj = { id:classId,name:"default"} as Class
+        const newOObj = { id:classId,name:className} as Class
         return json({ addClass: await addClass(usrId, newOObj) })
     }
     return json({ item: false })
