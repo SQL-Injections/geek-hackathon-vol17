@@ -42,7 +42,7 @@ export default function Index() {
             console.log(fetcher.data);
             // バリデーションが成功した場合のみフォーム送信
             if (fetcher.data) {
-                console.log("成功しました．CSVファイルゲット");
+                console.log("成功しました.CSVファイルゲット");
                 // Blobを作成し、URLを生成
                 const blob = new Blob([fetcher.data], { type: 'text/csv;charset=cp932;' });
                 const url = URL.createObjectURL(blob);
@@ -89,7 +89,7 @@ export default function Index() {
                             borderRadius='lg'
                             overflow='hidden'
                             bg='blue.50'>
-                    <Linsk to={`/teacher_manage_seats/${cls.id}`} key={index} style={{ textDecoration: 'none' }}>
+                    <Link to={`/teacher_manage_seats/${cls.id}`} key={index} style={{ textDecoration: 'none' }}>
                         <Box
                             overflow='scroll'
                             p={4}
