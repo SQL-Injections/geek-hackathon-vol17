@@ -4,7 +4,7 @@ import { redirect } from '@remix-run/node'
 import { json, useLoaderData, Form, useFetcher } from '@remix-run/react'
 import { create } from 'framer-motion/client'
 import { useEffect, useState } from 'react'
-import { SeatArrangement } from '~/original-components'
+import { SeatArrangement, AdminLogout as Logout } from '~/original-components'
 import Seat from '~/original-components/Seat'
 import { requireUserSession } from './assets/admin_auth.server'
 import styles from '~/styles/input_seats_amount.module.css'
@@ -25,7 +25,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function Index() {
     //clientでやってほしいので
     const [seatsAmount, setSeatsAmount] = useState(1)
-    const [className, setClassName] =  useState('')
+    const [className, setClassName] = useState('')
     const [isInputted, setIsInputted] = useState(false)
     const [height, setHeight] = useState<number>(0)
     const [width, setWidth] = useState<number>(0)
@@ -65,7 +65,7 @@ export default function Index() {
         // 一応確認
         console.log(isInputted)
         // 二つ目のコンテナを表示する
-        if(!validateInputs()){
+        if (!validateInputs()) {
             return
         }
         setIsConfirmed(true)
@@ -120,10 +120,10 @@ export default function Index() {
             )
 
             const formData = new FormData()
-            formData.append("usr_id", admin.usrId)
-            formData.append("class_id", id.toString())
-            formData.append("class_name", className.toString())
-            formData.append("function", "addClass")
+            formData.append('usr_id', admin.usrId)
+            formData.append('class_id', id.toString())
+            formData.append('class_name', className.toString())
+            formData.append('function', 'addClass')
 
             fetcher.submit(formData, { method: 'post', action: '/admin_dat' })
 
@@ -176,6 +176,7 @@ export default function Index() {
 
     return (
         <>
+            <Logout />
             <div className={styles.seats_amount_container}>
                 <div className={styles.seats_attribute}>
                     <div className={styles.seats_amount_text}>クラスの名前を入力してください</div>
