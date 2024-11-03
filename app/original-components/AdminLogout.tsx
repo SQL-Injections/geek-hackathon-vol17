@@ -10,7 +10,15 @@ function LogoutButton() {
 
     return (
         <Form method='post' action='/admin_logout'>
-            <Button variant='solid' type='submit' colorPalette={'red'} onClick={handleLogout}>
+            <Button
+                variant='solid'
+                type='submit'
+                p={2}
+                bg={'red'}
+                color={'white'}
+                _hover={{ bg: 'green' }}
+                onClick={handleLogout}
+            >
                 ログアウト
             </Button>
         </Form>

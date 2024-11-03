@@ -135,6 +135,7 @@ export default function Index() {
                 const value = id_set.splice(rand, 1)
                 student_ids.push({ id: value.toString(), name: '' })
             }
+            console.log(student_ids)
 
             fetcher.submit(
                 {
@@ -176,7 +177,6 @@ export default function Index() {
 
     return (
         <>
-            <Logout />
             <div className={styles.seats_amount_container}>
                 <div className={styles.seats_attribute}>
                     <div className={styles.seats_amount_text}>クラスの名前を入力してください</div>
