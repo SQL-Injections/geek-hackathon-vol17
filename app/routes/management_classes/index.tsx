@@ -1,7 +1,7 @@
 import { json, useLoaderData, Link, useFetcher } from '@remix-run/react'
 import { getClassList } from '../assets/admin_dat'
 import type { LoaderFunctionArgs } from '@remix-run/node'
-import { Box, Flex, CardBody, Container, Heading, SimpleGrid } from '@chakra-ui/react'
+import { Box, Card, CardBody, Container, Heading, SimpleGrid } from '@chakra-ui/react'
 import { Button } from '../../components/ui/button'
 import { Class } from '~/model/model'
 import { requireUserSession } from '../assets/admin_auth.server'
@@ -19,16 +19,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     const { usrId } = data
     
     const classList = getClassList(usrId)
+    const class_id = data.classId
     return json({ classes: classList })
 }
 
 export default function Index() {
     const fetcher = useFetcher()
-
-
     const { classes } = useLoaderData<typeof loader>()
     function DownloadCsv(class_id:string){
-        console.log("class_id = ",class_id)
         let classId = class_id//クラスID仮置き
     
         const formData = new FormData()
@@ -46,7 +44,6 @@ export default function Index() {
             console.log(fetcher.data)
             // バリデーションが成功した場合のみフォーム送信
             if (fetcher.data) {
-
                 console.log("成功しました.CSVファイルゲット")
 
                 // Blobを作成し、URLを生成
@@ -68,7 +65,9 @@ export default function Index() {
             }
         }
     }, [fetcher.data]);
+    const { classes } = useLoaderData<typeof loader>()
     return (
+
       <>
         <Logout />
           <Container maxW='container.xl' py={8}>
