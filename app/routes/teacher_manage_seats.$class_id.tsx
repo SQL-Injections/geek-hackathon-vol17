@@ -86,10 +86,7 @@ export default function Index() {
                             </Button>
                         )}
                 </Box>
-            </div> 
-            <button type='button' className={styles.loginbutton}>
-                <a href={`/management_classes`}>戻る</a>
-            </button>
+            </div>
         </div>
     )
 }
