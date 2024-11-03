@@ -76,17 +76,18 @@ export default function Index() {
             <div className={styles.seats}>
                 <Box className={`mx-auto ${styles.seats_boxes}`}>
                     <SeatArrangement room={room} />
-                        {finished ? (
-                            <Button onClick={handleFinish} type='submit' colorScheme='teal' mt={4}>
-                                座席配置を編集
-                            </Button>
-                        ) : (
-                            <Button onClick={handleFinish} type='submit' colorScheme='teal' mt={4}>
-                                座席配置を確定
-                            </Button>
-                        )}
                 </Box>
+                    
             </div> 
+            {finished ? (
+                        <Button onClick={handleFinish} className={styles.seats_submit_button} type='submit' colorScheme='teal' mt={4}>
+                            座席配置を編集
+                        </Button>
+                    ) : (
+                        <Button onClick={handleFinish} className={styles.seats_submit_button} type='submit' colorScheme='teal' mt={4}>
+                            座席配置を確定
+                        </Button>
+                    )}
             <button type='button' className={styles.loginbutton}>
                 <a href={`/management_classes`}>戻る</a>
             </button>
