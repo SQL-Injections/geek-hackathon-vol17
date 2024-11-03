@@ -1,12 +1,12 @@
 import { json, useLoaderData, Link ,useFetcher} from '@remix-run/react'
 import { getClassList } from '../assets/admin_dat'
 import type { LoaderFunctionArgs } from '@remix-run/node'
-import { Box, Card, CardBody, Container, Heading, SimpleGrid } from '@chakra-ui/react'
+import { Box, Flex, CardBody, Container, Heading, SimpleGrid } from '@chakra-ui/react'
 import { Button } from '../../components/ui/button'
 import { Class } from '~/model/model'
 import { requireUserSession } from '../assets/admin_auth.server'
 import { useEffect } from "react";
-
+import styles from "../../styles/management_classes.module.css"
 
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -82,16 +82,16 @@ export default function Index() {
                 {classes.map((cls: Class, index: number) => (
                     // とりあえず、className
                     <>
-                    <Box>
-                    <Link to={`/teacher_manage_seats/${cls.id}`} key={index} style={{ textDecoration: 'none' }}>
-                        <Box
+                    <Flex
                             height='10vh'
-                            display='flex'
                             alignItems='center'
-                            justifyContent='center'
-                            borderWidth='1px'
+                            justify="space-between"
                             borderRadius='lg'
                             overflow='hidden'
+                            bg='blue.50'>
+                    <Linsk to={`/teacher_manage_seats/${cls.id}`} key={index} style={{ textDecoration: 'none' }}>
+                        <Box
+                            overflow='scroll'
                             p={4}
                             bg='blue.50'
                             _hover={{
@@ -107,13 +107,13 @@ export default function Index() {
                             </Heading>
                         </Box>
                     </Link>
-                    <button onClick={() => DownloadCsv(cls.id)}>CSVダウンロード</button>
-                    </Box>
+                    <button className={styles.download_btn} onClick={() => DownloadCsv(cls.id)}><span className={styles.dli_box_in}><span></span></span></button>
+                    </Flex>
                     </>
                 ))}
             </SimpleGrid>
 
-            <Button variant="surface"><a href={`/input_seats_amount`}>新規クラス追加</a></Button>
+            <Button variant="surface"><a href={`/input_seats_amount`}>新規クラス</a></Button>
         </Container>
     )
 }
