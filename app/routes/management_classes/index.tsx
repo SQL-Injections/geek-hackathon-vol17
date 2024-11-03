@@ -83,8 +83,8 @@ export default function Index() {
                     // とりあえず、className
                     <>
                     <Flex
+                            minWidth={"200px"}
                             height='10vh'
-                            alignItems='center'
                             justify="space-between"
                             borderRadius='lg'
                             overflow='hidden'
@@ -92,7 +92,8 @@ export default function Index() {
                     <Link to={`/teacher_manage_seats/${cls.id}`} key={index} style={{ textDecoration: 'none' }}>
                         <Box
                             overflow='scroll'
-                            p={4}
+                            height={"100%"}
+                            minWidth={"160px"}
                             bg='blue.50'
                             _hover={{
                                 bg: 'blue.100',
