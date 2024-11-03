@@ -44,3 +44,12 @@ export async function getUserFromSession(request: Request) {
 
     return { usrId }
 }
+
+export async function logoutUser(request: Request) {
+    const session = await cookieSessionStorage.getSession(request.headers.get('Cookie'))
+    return redirect('/admin_login', {
+        headers: {
+            'Set-Cookie': await cookieSessionStorage.destroySession(session),
+        },
+    })
+}

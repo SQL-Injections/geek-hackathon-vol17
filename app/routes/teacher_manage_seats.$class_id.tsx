@@ -1,7 +1,7 @@
-import { json, useFetcher, useLoaderData,Form } from '@remix-run/react'
-import { useState,useEffect } from 'react'
+import { json, useFetcher, useLoaderData, Form } from '@remix-run/react'
+import { useState, useEffect } from 'react'
 import { Box, Button, Text } from '@chakra-ui/react'
-import { SeatArrangement } from '~/original-components'
+import { SeatArrangement, AdminLogout as Logout } from '~/original-components'
 import { idToClassSeats } from './assets/class_dat'
 import { LoaderFunctionArgs } from '@remix-run/node'
 import { requireUserSession } from './assets/admin_auth.server'
@@ -46,9 +46,8 @@ export default function Index() {
     const fetcher = useFetcher()
 
     console.log(room)
- 
-    const handleFinish = () => {
 
+    const handleFinish = () => {
         fetcher.submit(
             {
                 classId: classId,
@@ -60,22 +59,23 @@ export default function Index() {
 
     useEffect(() => {
         // fetcherのレスポンスをチェック
-        console.log("fetcher.data", fetcher.data)
-        
+        console.log('fetcher.data', fetcher.data)
         if (fetcher.data) {
             setFinished(fetcher.data.finished)
             setRoom((prevRoom) => ({
                 ...prevRoom,
                 seats: fetcher.data.seat,
-                finished:fetcher.data.finished,
+                finished: fetcher.data.finished,
             }))
         }
     }, [fetcher.data])
     return (
-        <div className={styles.seats_container} style={{ display: 'block' }}>
-            <div className={styles.seats}>
-                <Box className={`mx-auto ${styles.seats_boxes}`}>
-                    <SeatArrangement room={room} />
+        <>
+            <Logout />
+            <div className={styles.seats_container} style={{ display: 'block' }}>
+                <div className={styles.seats}>
+                    <Box className={`mx-auto ${styles.seats_boxes}`}>
+                        <SeatArrangement room={room} />
                         {finished ? (
                             <Button onClick={handleFinish} type='submit' colorScheme='teal' mt={4}>
                                 座席配置を編集
@@ -85,8 +85,9 @@ export default function Index() {
                                 座席配置を確定
                             </Button>
                         )}
-                </Box>
+                    </Box>
+                </div>
             </div>
-        </div>
+        </>
     )
 }
