@@ -26,7 +26,7 @@ export default function Index() {
             console.log("Fetcher data:", fetcher.data);
 
             // バリデーションが成功した場合のみフォーム送信
-            if (fetcher.data) {
+            if (fetcher.data.pushUsr) {
                 console.log("バリデーション成功: ユーザーが存在します");
                 window.location.href = "/admin_login"
             } else {
@@ -46,7 +46,7 @@ export default function Index() {
                     <div className={styles.container_title}>管理者用idを入力してください</div>
                     <input type="text" name="usr_id" placeholder="admin id" onChange={(e) => setUsrId(e.target.value)} className={styles.userinput} />
                     <div className={styles.container_title}>パスワードを入力してください</div>
-                    <input type="password" name="password" placeholder="password" onChange={(e) => setPassword(e.target.value)} className={styles.userinput} />
+                    <input type="password" name="password" minLength={8} placeholder="password" onChange={(e) => setPassword(e.target.value)} className={styles.userinput} />
                     <input type="hidden" name="function" value="pushUsr" />
                     <div className={styles.flex_btn}>
                         <button type="submit" className={styles.loginbutton} style={{top: "75%"}}>新規登録</button>
@@ -55,7 +55,7 @@ export default function Index() {
                 
                 {isVisible && <div className={styles.error_container}>
                     <div>
-                    <p className={styles.error_mes}>管理者用idかパスワードに不備があります</p>
+                    <p className={styles.error_mes}>該当のユーザidは既に利用されています</p>
                     </div>
                 </div>}
             </fetcher.Form>
