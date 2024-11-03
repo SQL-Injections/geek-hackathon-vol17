@@ -135,6 +135,7 @@ export default function Index() {
                 const value = id_set.splice(rand, 1)
                 student_ids.push({ id: value.toString(), name: '' })
             }
+            console.log(student_ids)
 
             fetcher.submit(
                 {
