@@ -183,8 +183,6 @@ export default function Index() {
                         type='text'
                         name='class_name'
                         id='class_name'
-                        min='1'
-                        defaultValue={seatsAmount}
                         disabled={isInputted}
                         onChange={(e) => setClassName(String(e.target.value))}
                         className={styles.seats_amount_input}
