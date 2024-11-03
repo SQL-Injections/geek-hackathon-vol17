@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs } from "@remix-run/node"
-import { studentDat,ClassStudents } from "./assets/student_dat"
+import { studentDat ,ClassStudents } from "./assets/student_dat"
 
 export async function action({ request } : LoaderFunctionArgs) {
     const formData = await request.formData()

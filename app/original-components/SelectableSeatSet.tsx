@@ -79,7 +79,7 @@ const SelectableSeatSet: React.FC<{ user: Student; classId: string; defaultSeats
                                     typeof enableSeats[index] == 'boolean'
                                         ? ''
                                         : Array.from(enableSeats[index])
-                                            .map((seat) => `${seat.displayName}`)
+                                            .map((seat) => `${seat.displayName ? seat.displayName : seat.id}`)
                                             .join(', ')
                                 }
                                 isDisabled={!enableSeats[index]}
