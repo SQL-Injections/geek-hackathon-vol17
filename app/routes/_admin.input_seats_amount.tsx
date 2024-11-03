@@ -176,7 +176,6 @@ export default function Index() {
 
     return (
         <>
-            <Logout />
             <div className={styles.seats_amount_container}>
                 <div className={styles.seats_attribute}>
                     <div className={styles.seats_amount_text}>クラスの名前を入力してください</div>

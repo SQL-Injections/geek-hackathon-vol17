@@ -71,7 +71,6 @@ export default function Index() {
     }, [fetcher.data])
     return (
         <>
-            <Logout />
             <div className={styles.seats_container} style={{ display: 'block' }}>
                 <div className={styles.seats}>
                     <Box className={`mx-auto ${styles.seats_boxes}`}>
@@ -85,11 +84,12 @@ export default function Index() {
                                 座席配置を確定
                             </Button>
                         )}
-                </Box>
-            </div> 
-            <button type='button' className={styles.loginbutton}>
-                <a href={`/management_classes`}>戻る</a>
-            </button>
-        </div>
+                    </Box>
+                </div>
+                <button type='button' className={styles.loginbutton}>
+                    <a href={`/management_classes`}>戻る</a>
+                </button>
+            </div>
+        </>
     )
 }
