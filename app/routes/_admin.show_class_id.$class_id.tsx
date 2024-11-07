@@ -44,14 +44,19 @@ export default function Index() {
     }
     return (
         <>
-            <div>classID : {classId}</div>
-            <div className={styles.flex_box}>
-                {studentList.map((classes) => (
-                    <>
-                    <div>{classes.id} : {classes.displayName}</div>
-                    </>
-                ))}
-            </div>
+            <table>
+                <caption>classID : {classId}</caption>
+                <div className={styles.flex_box}>
+                    {studentList.map((classes) => (
+                        <>
+                        <tr>
+                            <td>{classes.id}</td>
+                            <td>{classes.displayName}</td>
+                        </tr>
+                        </>
+                    ))}
+                </div>
+            </table>
         </>
     )
 }
