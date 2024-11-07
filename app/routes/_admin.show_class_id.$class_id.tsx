@@ -57,6 +57,9 @@ export default function Index() {
                     ))}
                 </div>
             </table>
+            <button type='button' className={styles.back_btn}>
+                <a href={`/management_classes`}>戻る</a>
+            </button>
         </>
     )
 }

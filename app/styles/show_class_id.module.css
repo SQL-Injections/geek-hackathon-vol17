@@ -2,3 +2,10 @@
     display: flex;
     flex-direction: column;
 }
+.back_btn{
+    margin: 8px;
+    font-size: 18px;
+    padding: 4px;
+    background-color: white;
+    color: black;
+}
