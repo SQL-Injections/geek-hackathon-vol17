@@ -27,7 +27,7 @@ export default function Index() {
     const { classes } = useLoaderData<typeof loader>()
     function DownloadCsv(class_id: string) {
         console.log('class_id = ', class_id)
-        let classId = class_id //クラスID仮置き
+        let classId = class_id
 
         const formData = new FormData()
         formData.append('class_id', classId)
@@ -97,12 +97,13 @@ export default function Index() {
                                 <Link
                                     to={`/teacher_manage_seats/${cls.id}`}
                                     key={index}
-                                    style={{ textDecoration: 'none' }}
+                                    style={{ textDecoration: 'none' }
+                                }
                                 >
                                     <Box
                                         overflow='scroll'
                                         height={'100%'}
-                                        minWidth={'160px'}
+                                        width={"100%"}
                                         bg='blue.50'
                                         _hover={{
                                             bg: 'blue.100',
@@ -116,6 +117,9 @@ export default function Index() {
                                             classId:{cls.id}
                                         </Heading>
                                     </Box>
+                                </Link>
+                                <Link to={`/show_class_id/${cls.id}`}>
+                                    <div className={styles.classId_btn}>ClassIDを見る</div>
                                 </Link>
                                 <button className={styles.download_btn} onClick={() => DownloadCsv(cls.id)}>
                                     <span className={styles.dli_box_in}>
