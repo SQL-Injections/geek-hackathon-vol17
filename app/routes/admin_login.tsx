@@ -7,6 +7,7 @@ import { login } from './assets/admin_login'
 import { useActionData } from '@remix-run/react'
 
 import { useState, useEffect, useId } from 'react'
+import Header from '~/original-components/Header'
 
 export const meta: MetaFunction = () => {
     return [{ title: 'New Remix App' }, { name: 'description', content: 'Welcome to Remix!' }]
@@ -40,6 +41,7 @@ export default function Index() {
 
     return (
         <>
+            <Header />
             <Form method='post'>
                 <div className={styles.container} style={{ height: '250px' }}>
                     <div className={styles.container_title}>管理者用idを入力してください</div>
