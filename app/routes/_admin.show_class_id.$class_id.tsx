@@ -44,18 +44,22 @@ export default function Index() {
     }
     return (
         <>
-            <table>
+            <table className={styles.usr_table}>
                 <caption>classID : {classId}</caption>
-                <div className={styles.flex_box}>
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Student Name</th>
+                    </tr>
+                </thead>
                     {studentList.map((classes) => (
                         <>
                         <tr>
-                            <td>{classes.id}</td>
-                            <td>{classes.displayName}</td>
+                            <td className={`${styles.cell}`}>{classes.id}</td>
+                            <td className={styles.cell}>{classes.displayName}</td>
                         </tr>
                         </>
                     ))}
-                </div>
             </table>
             <button type='button' className={styles.back_btn}>
                 <a href={`/management_classes`}>戻る</a>
