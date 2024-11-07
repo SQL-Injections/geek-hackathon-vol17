@@ -64,3 +64,21 @@
     border-left: 0.5px solid rgb(74, 74, 74);
     border-right: 1px solid rgb(74, 74, 74);
 }
+.Class_list{
+    display: grid;
+    grid-template-columns: 20% 20% 20% 20%;
+}
+@media screen and (max-width: 1200px) {
+    .Class_list{
+        display: grid;
+        grid-template-columns: 30% 30% 30%;
+    }
+}
+@media screen and (max-width: 600px) {
+    .Class_list{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+}

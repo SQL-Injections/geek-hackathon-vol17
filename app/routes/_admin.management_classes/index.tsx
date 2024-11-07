@@ -71,7 +71,6 @@ export default function Index() {
                 <Box
                     bg='blue.600'
                     color='white'
-                    width='80vh'
                     py={4}
                     px={6}
                     mx='auto'
@@ -82,7 +81,7 @@ export default function Index() {
                 >
                     クラス一覧
                 </Box>
-                <SimpleGrid columns={{ base: 3, md: 5 }} gridGap={4}>
+                <div className={styles.Class_list}>
                     {classes.map((cls: Class, index: number) => (
                         // とりあえず、className
                         <>
@@ -93,6 +92,7 @@ export default function Index() {
                                 borderRadius='lg'
                                 overflow='hidden'
                                 bg='blue.50'
+                                m={"3px"}
                             >
                                 <Link
                                     to={`/teacher_manage_seats/${cls.id}`}
@@ -129,7 +129,7 @@ export default function Index() {
                             </Flex>
                         </>
                     ))}
-                </SimpleGrid>
+                </div>
 
                 <Button variant='surface'>
                     <a href={`/input_seats_amount`}>新規クラス</a>
