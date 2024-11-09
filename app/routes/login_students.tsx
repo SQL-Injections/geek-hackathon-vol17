@@ -3,6 +3,7 @@ import { Form, useFetcher } from '@remix-run/react'
 import styles from '~/styles/login_students.module.css'
 import { useState, useEffect } from 'react'
 import { login } from './assets/student_login'
+import Header from '~/original-components/Header'
 
 export const meta: MetaFunction = () => {
     return [{ title: 'New Remix App' }, { name: 'description', content: 'Welcome to Remix!' }]
@@ -48,11 +49,16 @@ export default function Index() {
         // fetcherのレスポンスをチェック
         console.log('fetcher.data', fetcher.data)
         if (fetcher.data) {
+
             setIsInputted(true)
+
+
         }
     }, [fetcher.data])
     return (
         <>
+
+            <Header />
             <Form method='post'>
                 <div className={styles.container} style={{ height: '250px' }}>
                     <div className={styles.container_title}>class idを入力してください</div>

@@ -25,6 +25,7 @@ export default function Index() {
     const fetcher = useFetcher()
 
     const { classes } = useLoaderData<typeof loader>()
+
     function DownloadCsv(classUuid: string) {
         const formData = new FormData()
         formData.append('class_uuid', classUuid)
@@ -67,7 +68,6 @@ export default function Index() {
                 <Box
                     bg='blue.600'
                     color='white'
-                    width='80vh'
                     py={4}
                     px={6}
                     mx='auto'
@@ -78,14 +78,15 @@ export default function Index() {
                 >
                     クラス一覧
                 </Box>
-                <SimpleGrid columns={{ base: 3, md: 5 }} gridGap={4}>
+                <div className={styles.Class_list}>
                     {classes.map((cls: Class, index: number) => {
                         const classUuid = cls.uuid
                         if (!classUuid) {
                             return null
                         }
                         return (
-                            <div key={index}>
+                            // とりあえず、className
+                            <>
                                 <Flex
                                     minWidth={'200px'}
                                     height='10vh'
@@ -93,6 +94,7 @@ export default function Index() {
                                     borderRadius='lg'
                                     overflow='hidden'
                                     bg='blue.50'
+                                    m={'3px'}
                                 >
                                     <Link
                                         to={`/teacher_manage_seats/${cls.id}`}
@@ -102,7 +104,7 @@ export default function Index() {
                                         <Box
                                             overflow='scroll'
                                             height={'100%'}
-                                            minWidth={'160px'}
+                                            width={'100%'}
                                             bg='blue.50'
                                             _hover={{
                                                 bg: 'blue.100',
@@ -117,16 +119,19 @@ export default function Index() {
                                             </Heading>
                                         </Box>
                                     </Link>
-                                    <button className={styles.download_btn} onClick={() => DownloadCsv(classUuid)}>
+                                    <Link to={`/show_class_id/${cls.id}`}>
+                                        <div className={styles.classId_btn}>ClassIDを見る</div>
+                                    </Link>
+                                    <button className={styles.download_btn} onClick={() => DownloadCsv(cls.id)}>
                                         <span className={styles.dli_box_in}>
                                             <span></span>
                                         </span>
                                     </button>
                                 </Flex>
-                            </div>
+                            </>
                         )
                     })}
-                </SimpleGrid>
+                </div>
 
                 <Button variant='surface'>
                     <a href={`/input_seats_amount`}>新規クラス</a>

@@ -5,6 +5,7 @@ import styles from '~/styles/admin_login.module.css'
 
 import { useState, useEffect } from 'react'
 import { style } from 'framer-motion/client'
+import Header from '~/original-components/Header'
 
 export const meta: MetaFunction = () => {
     return [{ title: 'New Remix App' }, { name: 'description', content: 'Welcome to Remix!' }]
@@ -15,6 +16,7 @@ export default function Index() {
     const [password, setPassword] = useState<string>()
     const [classId, setClassId] = useState<string>()
     const fetcher = useFetcher<{ pushUsr: Function }>()
+
 
     const [isVisible, setIsVisible] = useState(false)
     useEffect(() => {
@@ -38,6 +40,8 @@ export default function Index() {
     }
     return (
         <>
+            <Header />{' '}
+
             <fetcher.Form method='post' action='/admin_dat'>
                 <div className={styles.container} style={{ height: '250px' }}>
                     <div className={styles.container_title}>管理者用idを入力してください</div>

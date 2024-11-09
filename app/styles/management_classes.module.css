@@ -52,3 +52,33 @@
     padding-top: 6px;
     padding-bottom: 6px;
 }
+.classId_btn{
+    min-width: 3rem;
+    width: 100%;
+    color: black;
+    text-align: center;
+    height: 100%;
+}
+.classId_btn:hover{
+    background-color: #cde3ff;
+    border-left: 0.5px solid rgb(74, 74, 74);
+    border-right: 1px solid rgb(74, 74, 74);
+}
+.Class_list{
+    display: grid;
+    grid-template-columns: 20% 20% 20% 20%;
+}
+@media screen and (max-width: 1200px) {
+    .Class_list{
+        display: grid;
+        grid-template-columns: 30% 30% 30%;
+    }
+}
+@media screen and (max-width: 600px) {
+    .Class_list{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+}

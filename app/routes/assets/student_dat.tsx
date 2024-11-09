@@ -15,3 +15,18 @@ export async function getStudentList(classUuid: string): Promise<Array<Student>>
 export async function getStudentById(classUuid: string, studentId: string) {
     return getStudentByI(classUuid, studentId)
 }
+
+// rename displayName
+export async function reName(userId: string, classId: string,newName:string) {
+    if (!userId || !classId) {
+        return false
+    }
+    const studentList = studentDat[classId]
+    studentList.map((student) => {
+        if (student.id == userId) {
+            student.displayName = newName;
+            return true;
+        }
+    })
+    return false;
+}
