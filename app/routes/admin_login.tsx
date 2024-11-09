@@ -31,7 +31,7 @@ export async function action({ request }: any) {
 }
 
 export default function Index() {
-    const actionData = useActionData()
+    const actionData = useActionData<{ error: string }>()
     const [usrId, setUsrId] = useState<string>()
     const [password, setPassword] = useState<string>()
     const fetcher = useFetcher()

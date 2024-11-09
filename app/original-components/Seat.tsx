@@ -12,12 +12,12 @@ const Seat: React.FC<SeatPropsType> = ({ text, isReserved, isDisabled }) => {
     return (
         <Box
             className='content-center text-center rounded'
-            backgroundColor={isReserved ? 'red' : 'green'}
+            backgroundColor={isDisabled || isReserved ? 'green' : '#87CEEB'}
             opacity={isDisabled ? 0.5 : 1}
             width={seatSize}
             height={seatSize}
             fontSize={seatSize / 5}
-            overflowY ={'auto'}
+            overflowY={'auto'}
         >
             {text}
         </Box>

@@ -15,9 +15,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     // sessionからデータを取り出す
     const data = await requireUserSession(request)
 
-    const { usrId } = data
+    const { usrUuid } = data
 
-    const classList = getClassList(usrId)
+    const classList = await getClassList(usrUuid)
     return json({ classes: classList })
 }
 
@@ -25,12 +25,9 @@ export default function Index() {
     const fetcher = useFetcher()
 
     const { classes } = useLoaderData<typeof loader>()
-    function DownloadCsv(class_id: string) {
-        console.log('class_id = ', class_id)
-        let classId = class_id //クラスID仮置き
-
+    function DownloadCsv(classUuid: string) {
         const formData = new FormData()
-        formData.append('class_id', classId)
+        formData.append('class_uuid', classUuid)
         console.log(formData)
 
         console.log('fetcher定義')
@@ -40,7 +37,6 @@ export default function Index() {
     useEffect(() => {
         // fetcherのレスポンスをチェック
         if (fetcher.data) {
-            console.log('Fetcher data:', fetcher.data)
             console.log(fetcher.data)
             // バリデーションが成功した場合のみフォーム送信
             if (fetcher.data) {
@@ -83,48 +79,53 @@ export default function Index() {
                     クラス一覧
                 </Box>
                 <SimpleGrid columns={{ base: 3, md: 5 }} gridGap={4}>
-                    {classes.map((cls: Class, index: number) => (
-                        // とりあえず、className
-                        <>
-                            <Flex
-                                minWidth={'200px'}
-                                height='10vh'
-                                justify='space-between'
-                                borderRadius='lg'
-                                overflow='hidden'
-                                bg='blue.50'
-                            >
-                                <Link
-                                    to={`/teacher_manage_seats/${cls.id}`}
-                                    key={index}
-                                    style={{ textDecoration: 'none' }}
+                    {classes.map((cls: Class, index: number) => {
+                        const classUuid = cls.uuid
+                        if (!classUuid) {
+                            return null
+                        }
+                        return (
+                            <div key={index}>
+                                <Flex
+                                    minWidth={'200px'}
+                                    height='10vh'
+                                    justify='space-between'
+                                    borderRadius='lg'
+                                    overflow='hidden'
+                                    bg='blue.50'
                                 >
-                                    <Box
-                                        overflow='scroll'
-                                        height={'100%'}
-                                        minWidth={'160px'}
-                                        bg='blue.50'
-                                        _hover={{
-                                            bg: 'blue.100',
-                                            shadow: 'md',
-                                        }}
-                                        textAlign='center'
+                                    <Link
+                                        to={`/teacher_manage_seats/${cls.id}`}
+                                        key={index}
+                                        style={{ textDecoration: 'none' }}
                                     >
-                                        <Heading size='md' color='blue.800'>
-                                            {cls.name}
-                                            <br />
-                                            classId:{cls.id}
-                                        </Heading>
-                                    </Box>
-                                </Link>
-                                <button className={styles.download_btn} onClick={() => DownloadCsv(cls.id)}>
-                                    <span className={styles.dli_box_in}>
-                                        <span></span>
-                                    </span>
-                                </button>
-                            </Flex>
-                        </>
-                    ))}
+                                        <Box
+                                            overflow='scroll'
+                                            height={'100%'}
+                                            minWidth={'160px'}
+                                            bg='blue.50'
+                                            _hover={{
+                                                bg: 'blue.100',
+                                                shadow: 'md',
+                                            }}
+                                            textAlign='center'
+                                        >
+                                            <Heading size='md' color='blue.800'>
+                                                {cls.name}
+                                                <br />
+                                                classId:{cls.id}
+                                            </Heading>
+                                        </Box>
+                                    </Link>
+                                    <button className={styles.download_btn} onClick={() => DownloadCsv(classUuid)}>
+                                        <span className={styles.dli_box_in}>
+                                            <span></span>
+                                        </span>
+                                    </button>
+                                </Flex>
+                            </div>
+                        )
+                    })}
                 </SimpleGrid>
 
                 <Button variant='surface'>

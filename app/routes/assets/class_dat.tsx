@@ -1,161 +1,144 @@
+import { getRoom, createRoom, updateRoom } from '~/model/'
+import { getSeats, createSeats, updateSeats, updateSeatStudents } from '~/model/seats.server'
+import { getClassById as getClass } from '~/model/class.server'
+import { isValidStudent, getStudentList } from '~/model/student.server'
 import { Room, Student } from '~/model/model'
-import { isValidUsr,getStudentList } from './student_dat'
+import { prisma } from '~/model/db.server'
+import { seatSize } from '~/config'
 
-export type SeatsInfo = {
-    [classId: string]: Room
+// クラスIDに基づいてRoomとその座席情報を取得
+export async function idToClassSeats(classUuid: string): Promise<Room> {
+    const dbRoom = await getRoom(classUuid)
+    if (!dbRoom) throw new Error(`Room with classId ${classUuid} not found`)
+
+    const dbSeats = await getSeats(dbRoom.uuid)
+    return { ...dbRoom, seats: dbSeats }
 }
 
-// 連想配列を定義
-let Classobj: SeatsInfo = {
-    '1': {
-        row: 3,
-        column: 3,
-        seatAmount: 6, //クラスの人数
-        seats: [
-            [true, true, false],
-            [false, true, true],
-            [true, false, true],
-        ],
-    },
-    // "ClassID": "座席のデータ"
-}
-// サーバーへの問い合わせが同時にあった場合に不整合を起こさないため
-let blocked = false
-
-export function idToClassSeats(id: string) {
-    return Classobj[id]
-}
-
-export function pushIdAndClass(id: string, seats: Room) {
-    console.log('id = ' + id)
-    // console.log(seats);
-    Classobj[id] = seats
-    console.log('class add ', Classobj[id])
+// クラスIDと座席情報をDBに保存
+export async function pushIdAndClass(classUuid: string, room: Room) {
+    const createdRoom = await createRoom(classUuid, room)
+    console.log('/class.dat', room)
+    const roomUuid = createdRoom.uuid
+    await createSeats(roomUuid, room.seats)
     return true
 }
 
-/**
- * modifyClass
- * @param classId class id
- * @param usrId user(student) id
- * @param x column number
- * @param y row number
- * @returns if the class id exists, return true
- * @description
- *  modifyClassは指定されたクラスidの座席のデータを変更する
- *  そのクラスidが存在する場合、指定されたusrIdをその場所に追加する
- *  もし、指定されたusrIdが既に存在する場合には、削除する
- *  その結果その場所に誰もいない場合はtrueに書き換える
- *  そのクラスclassidが存在しない場合にはfalseを返す
- */
-export function modifyClass(classId: string, usrId: string, usrName: string, x: number, y: number) {
-    if (!Classobj[classId]) {
-        return false
-    }
+// 座席のデータを更新する
+export async function modifyClass(classUuid: string, student: Student, x: number, y: number) {
     // ユーザーが無効であれば処理を終了する
-    if (!isValidUsr(usrId, classId)) {
+    if (!(await isValidStudent(student.id, classUuid))) {
         return false
     }
-    if (Classobj[classId].finished) {
+
+    const room = await getRoom(classUuid)
+    if (!room || room.finished) {
         return false
     }
-    while (blocked) {
-        // blocked
-    }
-    //処理が終わるまでブロックする
-    blocked = true
-    const row = Classobj[classId].row
-    const column = Classobj[classId].column
-    const seats = Classobj[classId].seats
-    //元居た場所が存在するならそれを削除する
-    for (let i = 0; i < row; i++) {
-        for (let j = 0; j < column; j++) {
-            if (seats[i][j] instanceof Array) {
-                let set: Student[] = seats[i][j] as Student[]
-                // もしsetにusrIdが存在するなら削除する
-                if (set.some((value) => value.id === usrId)) {
-                    //usrIdを削除
-                    set = set.filter((student) => student.id !== usrId)
 
-                    // 削除した結果その場所を選択している人がいないなら書き換え(別にset([])のままでも動きはする)
+    const seats = await getSeats(room.uuid)
+    console.log('/assets/class_dat', seats)
 
-                    Classobj[classId].seats[i][j] = set
-                    if (set.length === 0) {
-                        Classobj[classId].seats[i][j] = true
-                    }
-                }
+    let seatPosition = { row: -1, column: -1 }
+
+    seats.forEach((row, rowIndex) => {
+        row.forEach((seat, columnIndex) => {
+            if (seat.seatStudents.some((s) => s.uuid === student.uuid)) {
+                seatPosition = { row: rowIndex, column: columnIndex }
+
+                seat.seatStudents = seat.seatStudents.filter((s) => s.uuid !== student.uuid)
             }
+        })
+    })
+
+    const targetSeat = seats[y][x]
+
+    if (targetSeat.isAvailable) {
+        targetSeat.seatStudents.push(student)
+
+        if (!targetSeat.uuid) {
+            return
         }
-    }
-    // その場所がまだ選択されていないなら
-    if (Classobj[classId].seats[y][x] === true) {
-        Classobj[classId].seats[y][x] = [{ id: usrId, displayName: usrName }]
-    }
-    // もう誰かに選択されているなら
-    else if (Classobj[classId].seats[y][x] instanceof Array) {
-        Classobj[classId].seats[y][x].push({ id: usrId, displayName: usrName })
+
+        await updateSeatStudents(targetSeat.uuid, targetSeat.seatStudents)
+
+        if (seatPosition.row !== -1 && seatPosition.column !== -1) {
+            const newPreSeat = seats[seatPosition.row][seatPosition.column]
+
+            if (!newPreSeat.uuid) {
+                return
+            }
+            await updateSeatStudents(newPreSeat.uuid, newPreSeat.seatStudents)
+        }
+    } else {
+        throw new Error('This seat is not available for students')
     }
 
-    console.dir(Classobj[classId], { depth: null })
-    // 処理が終了したので解除
-    blocked = false
-    return Classobj[classId].seats
+    return seats
 }
 
-export const toggleFinished = async (classId: string) => {
-    Classobj[classId].finished = !Classobj[classId].finished
-    if (Classobj[classId].finished) {
-        let newobj = {seat: await assignSeats(classId),finished:Classobj[classId].finished}
-        return newobj
+export async function handleFinish(classUuid: string) {
+    const { seat, finished } = await toggleFinished(classUuid)
+
+    if (finished) {
+        const newSeats = await assignSeats(classUuid)
+        return { seat: newSeats, finished: finished }
     }
-    else{
-        let newobj = {seat: Classobj[classId].seats ,finished:Classobj[classId].finished}
-        return newobj
-    }
+    return { seat: seat, finished: finished }
 }
 
-export const handleFinish = async (classId: string, room: Room) => {
+export async function toggleFinished(classUuid: string) {
+    const room = await getRoom(classUuid)
+    if (!room) {
+        throw new Error(`Room with classId ${classUuid} not found`)
+    }
+    const seats = await getSeats(room.uuid)
+    if (!seats) {
+        throw new Error(`Seats with roomUuid ${room.uuid} not found`)
+    }
 
-    Classobj[classId] = room
-    return Classobj[classId]
+    await updateRoom(classUuid, {
+        ...{ uuid: room.uuid, row: room.row, column: room.column, seatAmount: room.seatAmount },
+        seats: seats,
+        finished: !room.finished,
+    })
+
+    return { seat: seats, finished: !room.finished }
 }
 
-export async function assignSeats(classId:string){
-    while (blocked) {
-        // blocked
-    }
-    blocked = true
-    const roomData = idToClassSeats(classId)
+export async function assignSeats(classUuid: string) {
+    const roomData = await idToClassSeats(classUuid)
     const totalSeatAmount = roomData.seatAmount
+
+    if (!roomData?.uuid) {
+        throw new Error(`Room with classId ${classUuid} not found`)
+    }
+
     console.log(totalSeatAmount)
 
     const currentStudentList = roomData.seats.flatMap((seatRow) =>
-        seatRow.flatMap((seat) => (Array.isArray(seat) ? seat : [])),
+        seatRow.flatMap((seat) => (seat.seatStudents.length > 0 ? seat.seatStudents : [])),
     )
     console.log(currentStudentList)
 
     const emptySeatIndices = roomData.seats.flatMap((seatRow, rowIndex) =>
-        seatRow.flatMap((seat, colIndex) => (seat === true ? [{ row: rowIndex, col: colIndex }] : [])),
+        seatRow.flatMap((seat, colIndex) => (seat.isAvailable ? [{ row: rowIndex, col: colIndex }] : [])),
     )
     console.log(emptySeatIndices)
 
-    // 未選択の学生を格納するリストを初期化
     const unselectedStudents: Student[] = []
 
-    // room.seats を走査して更新
+    // 現在の座席を更新し未選択の学生を収集
     const updatedSeats = roomData.seats.map((seatRow, rowIndex) =>
         seatRow.map((seat, colIndex) => {
-            if (Array.isArray(seat) && seat.length > 0) {
-                // ランダムに一人の学生を選択
-                const randomIndex = Math.floor(Math.random() * seat.length)
-                const selectedStudent = seat[randomIndex]
+            if (seat.seatStudents.length > 0) {
+                const randomIndex = Math.floor(Math.random() * seat.seatStudents.length)
+                const selectedStudent = seat.seatStudents[randomIndex]
 
-                // 残りの学生を未選択リストに追加
-                const remainingStudents = seat.filter((_, index) => index !== randomIndex)
+                const remainingStudents = seat.seatStudents.filter((_, index) => index !== randomIndex)
                 unselectedStudents.push(...remainingStudents)
 
-                // 選ばれた学生で seat を更新
-                return [selectedStudent]
+                return { ...seat, seatStudents: [selectedStudent] }
             }
             return seat
         }),
@@ -163,28 +146,33 @@ export async function assignSeats(classId:string){
     console.log('未選択の学生リスト:', unselectedStudents)
 
     const shuffledEmptySeats = emptySeatIndices.sort(() => Math.random() - 0.5)
-    const studentList = await getStudentList(classId)
+    const studentList = await getStudentList(classUuid)
     const missingStudents = studentList.filter(
         (student) => !currentStudentList.some((currentStudent) => currentStudent.id === student.id),
     )
 
     const unregisteredCount = totalSeatAmount - studentList.length
-    const unregisteredStudents: Student[] = Array.from({ length: unregisteredCount }, (_, index) => {
-        return { id: 'unregistered' + index, displayName: String(index + 1) }
-    })
+    const unregisteredStudents: Student[] = Array.from({ length: unregisteredCount }, (_, index) => ({
+        id: `unregistered${index}`,
+        displayName: String(index + 1),
+    }))
 
     const studentsToAssign = [...unselectedStudents, ...unregisteredStudents, ...missingStudents]
 
-    // ランダムに割り当て
+    // 空席に学生をランダムに割り当てる
     shuffledEmptySeats.forEach(({ row, col }) => {
         if (studentsToAssign.length > 0) {
-            const student = studentsToAssign.shift() // 割り当てる学生を取り出す
+            const student = studentsToAssign.shift()
             if (student) {
-                updatedSeats[row][col] = [student] // 空席に学生を割り当て
+                updatedSeats[row][col] = { ...updatedSeats[row][col], seatStudents: [student] }
             }
         }
     })
-    Classobj[classId].seats = updatedSeats
-    blocked = false
+
+    await updateSeats(updatedSeats)
     return updatedSeats
+}
+
+export async function getClassById(classId: string) {
+    return await getClass(classId)
 }
