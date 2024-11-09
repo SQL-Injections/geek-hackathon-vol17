@@ -1,5 +1,5 @@
 import { createCookieSessionStorage, redirect } from "@remix-run/node";
-import { isValidUsr } from "./student_dat";
+import { isValidUsr,reName } from "./student_dat";
 import { createUserSession } from "./student_auth.server";
 
 
@@ -18,8 +18,11 @@ export async function login({
         const error: any = new Error(
             "id又はpasswordに誤りがあります。"
         );
-        error.status = 401;
-        throw error;
+        error.status = 401
+        throw error
+    }
+    else{
+        reName(usr_id,class_id,usr_name)
     }
 
     return createUserSession(usr_id, class_id, usr_name, "/write_my_seats");

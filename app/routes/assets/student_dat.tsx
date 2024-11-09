@@ -30,3 +30,18 @@ export async function pushUsr(user: Array<Student>, classId: string) {
 export const getStudentList = async (classId: string) => {
     return studentDat[classId]
 }
+
+// rename displayName
+export async function reName(userId: string, classId: string,newName:string) {
+    if (!userId || !classId) {
+        return false
+    }
+    const studentList = studentDat[classId]
+    studentList.map((student) => {
+        if (student.id == userId) {
+            student.displayName = newName;
+            return true;
+        }
+    })
+    return false;
+}

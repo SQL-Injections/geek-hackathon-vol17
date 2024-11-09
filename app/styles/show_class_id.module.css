@@ -1,0 +1,19 @@
+.flex_box{
+    display: flex;
+    flex-direction: column;
+}.usr_table{
+    width: 50%;
+    border: 1px solid white;
+}
+.usr_table td,th{
+    border: 1px solid white;
+    width: 25%;
+    text-align: center;
+}
+.back_btn{
+    margin: 8px;
+    font-size: 18px;
+    padding: 4px;
+    background-color: white;
+    color: black;
+}
