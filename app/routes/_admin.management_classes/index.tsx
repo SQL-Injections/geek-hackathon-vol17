@@ -1,13 +1,12 @@
 import { json, useLoaderData, Link, useFetcher } from '@remix-run/react'
 import { getClassList } from '../assets/admin_dat'
 import type { LoaderFunctionArgs } from '@remix-run/node'
-import { Box, Flex, CardBody, Container, Heading, SimpleGrid } from '@chakra-ui/react'
+import { Box, Flex, Container, Heading } from '@chakra-ui/react'
 import { Button } from '../../components/ui/button'
 import { Class } from '~/model/model'
 import { requireUserSession } from '../assets/admin_auth.server'
 
 import { useEffect } from 'react'
-import { AdminLogout as Logout } from '~/original-components'
 
 import styles from '../../styles/management_classes.module.css'
 
@@ -122,7 +121,7 @@ export default function Index() {
                                     <Link to={`/show_class_id/${cls.id}`}>
                                         <div className={styles.classId_btn}>ClassIDを見る</div>
                                     </Link>
-                                    <button className={styles.download_btn} onClick={() => DownloadCsv(cls.id)}>
+                                    <button className={styles.download_btn} onClick={() => DownloadCsv(classUuid)}>
                                         <span className={styles.dli_box_in}>
                                             <span></span>
                                         </span>
