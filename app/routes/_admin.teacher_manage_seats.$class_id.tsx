@@ -9,6 +9,7 @@ import { getClassList } from './assets/admin_dat'
 import { getStudentList } from './assets/student_dat'
 import { Room } from '~/model/model'
 import styles from '~/styles/write_my_seats.module.css'
+import html2canvas from 'html2canvas';
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
     const data = await requireUserSession(request)
@@ -57,6 +58,20 @@ export default function Index() {
         )
     }
 
+
+    const handleSaveImage = () => {
+        const seatsElement = document.querySelector(`.${styles.seats}`);
+        if (seatsElement) {
+            html2canvas(seatsElement).then((canvas) => {
+                const dataUrl = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.download = 'seats.png';
+                link.href = dataUrl;
+                link.click();
+            });
+        }
+    };
+
     useEffect(() => {
         // fetcherのレスポンスをチェック
         console.log('fetcher.data', fetcher.data)
@@ -77,15 +92,24 @@ export default function Index() {
                 </Box>
             </div>
             {finished ? (
-                <Button
-                    onClick={handleFinish}
-                    className={styles.seats_submit_button}
-                    type='submit'
-                    colorScheme='teal'
-                    mt={4}
-                >
-                    座席配置を編集
-                </Button>
+                <div>
+                    <Button
+                        onClick={handleFinish}
+                        className={styles.seats_submit_button}
+                        type='submit'
+                        colorScheme='teal'
+                        mt={4}
+                    >
+                        座席配置を編集
+                    </Button>
+                    <div className={styles.seats_save_button}>
+                        <button className={styles.download_btn} onClick={handleSaveImage}>
+                            <span className={styles.dli_box_in}>
+                                <span></span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
             ) : (
                 <Button
                     onClick={handleFinish}
