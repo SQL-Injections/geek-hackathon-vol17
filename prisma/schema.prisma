@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Manager {
+  id       String  @id
+  uuid     String  @default(uuid()) @unique
+  password String
+  classes  Class[] @relation("ManagerClasses")
+}
+
+model Student {
+  id          String   @id
+  uuid        String   @default(uuid()) @unique
+  displayName String
+  class       Class    @relation(fields: [classUuid], references: [uuid])
+  classUuid   String
+  seats       Seat[]   @relation("SeatStudents")
+}
+
+model Class {
+  id        String    @id
+  uuid      String    @default(uuid()) @unique
+  name      String
+  manager   Manager   @relation("ManagerClasses", fields: [managerUuid], references: [uuid])
+  managerUuid String
+  rooms     Room[]
+  students  Student[]
+}
+
+model Room {
+  uuid       String   @id @default(uuid())
+  row        Int
+  column     Int
+  seatAmount Int
+  finished   Boolean @default(false)
+  seats      Seat[]
+  class      Class    @relation(fields: [classUuid], references: [uuid])
+  classUuid  String
+}
+
+model Seat {
+  uuid       String   @id @default(uuid())
+  row        Int
+  column     Int
+  isAvailable   Boolean
+  students   Student[] @relation("SeatStudents")
+  room       Room      @relation(fields: [roomUuid], references: [uuid])
+  roomUuid   String
+}

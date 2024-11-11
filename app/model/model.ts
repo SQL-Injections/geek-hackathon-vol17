@@ -1,39 +1,23 @@
-export type ClassList = {
-    [managerId: string]: Array<Class>
-}
-
-export type SeatsInfo = {
-    [classId: string]: Room
-}
-
-// 今後使うかも　使わなかったら消して
-// export type RoomList = {
-//     [classId: string]: Array<Room>
-// }
-
-// いるかわからん
-export type ClassStudents = {
-    [classId: string]: Array<Student>
-}
-
-// これより上は、本来各ページで定義されるものだが、わかりやすいようにここで定義する。
-
 export type Manager = {
+    uuid?: string
     id: string
     password: string
 }
 
 export type Student = {
+    uuid?: string
     id: string
     displayName: string
 }
 
 export type Class = {
+    uuid?: string
     id: string
     name: string
 }
 
 export type Room = {
+    uuid?: string
     row: number // 縦
     column: number // 横
     seatAmount: number
@@ -41,4 +25,4 @@ export type Room = {
     seats: Array<Array<Seat>>
 }
 
-export type Seat = boolean | Array<Student>
+export type Seat = { uuid?: string; isAvailable: boolean; seatStudents: Array<Student> }

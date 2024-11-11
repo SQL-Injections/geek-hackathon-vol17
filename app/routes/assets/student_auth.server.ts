@@ -1,5 +1,6 @@
 import { redirect } from '@remix-run/node'
 import { createCookieSessionStorage } from '@remix-run/node'
+import { getStudentById, getStudentList } from './student_dat'
 
 const cookieSessionStorage = createCookieSessionStorage({
     cookie: {
@@ -13,11 +14,11 @@ const cookieSessionStorage = createCookieSessionStorage({
     },
 })
 
-export async function createUserSession(userId: string, classId: string, usrName: string, redirectPath: string) {
+export async function createUserSession(userId: string, classUuid: string, usrName: string, redirectPath: string) {
     const session = await cookieSessionStorage.getSession()
     session.set('usrId', userId)
     session.set('role', 'student')
-    session.set('classId', classId)
+    session.set('classUuid', classUuid)
     session.set('usrName', usrName)
     return redirect(redirectPath, {
         headers: {
@@ -39,12 +40,17 @@ export async function getUserFromSession(request: Request) {
     const session = await cookieSessionStorage.getSession(request.headers.get('Cookie'))
 
     const usrId: string = session.get('usrId')
-    const classId: string = session.get('classId')
+    const classUuid: string = session.get('classUuid')
     const usrName: string = session.get('usrName')
 
+    const student = await getStudentById(classUuid, usrId)
+    if (!student) {
+        return null
+    }
+    const usrUuid = student.uuid
     if (!usrId) {
         return null
     }
 
-    return { usrId, usrName, classId }
+    return { usrId, usrName, usrUuid, classUuid }
 }

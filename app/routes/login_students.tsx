@@ -1,7 +1,6 @@
 import type { MetaFunction, LoaderFunctionArgs } from '@remix-run/node'
 import { Form, useFetcher } from '@remix-run/react'
 import styles from '~/styles/login_students.module.css'
-import { idToClassSeats } from '~/routes/assets/class_dat'
 import { useState, useEffect } from 'react'
 import { login } from './assets/student_login'
 import Header from '~/original-components/Header'
@@ -50,13 +49,15 @@ export default function Index() {
         // fetcherのレスポンスをチェック
         console.log('fetcher.data', fetcher.data)
         if (fetcher.data) {
-            if (fetcher.data) {
-                setIsInputted(true)
-            }
+
+            setIsInputted(true)
+
+
         }
     }, [fetcher.data])
     return (
         <>
+
             <Header />
             <Form method='post'>
                 <div className={styles.container} style={{ height: '250px' }}>

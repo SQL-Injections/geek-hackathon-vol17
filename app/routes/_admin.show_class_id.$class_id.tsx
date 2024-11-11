@@ -12,21 +12,20 @@ import styles from '~/styles/show_class_id.module.css'
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
     const data = await requireUserSession(request)
-    const adminId = data.usrId
+    const adminUuid = data.usrUuid
 
-    const classListPromise = getClassList(adminId)
+    const classListPromise = getClassList(adminUuid)
     const classList = await classListPromise
 
     const classId = params.class_id || ''
     const existClass = classList.find((cls) => cls.id === classId)
 
-
     if (!existClass) {
         return json({ classId, room: null, studentList: [] })
     }
 
-    const room = idToClassSeats(classId)
-    const studentListPromise = getStudentList(classId)
+    const room = idToClassSeats(existClass.uuid)
+    const studentListPromise = getStudentList(existClass.uuid)
     const studentList = await studentListPromise
 
     return json({ classId, room, studentList })
@@ -52,14 +51,14 @@ export default function Index() {
                         <th>Student Name</th>
                     </tr>
                 </thead>
-                    {studentList.map((classes) => (
-                        <>
+                {studentList.map((classes) => (
+                    <>
                         <tr>
                             <td className={`${styles.cell}`}>{classes.id}</td>
                             <td className={styles.cell}>{classes.displayName}</td>
                         </tr>
-                        </>
-                    ))}
+                    </>
+                ))}
             </table>
             <button type='button' className={styles.back_btn}>
                 <a href={`/management_classes`}>戻る</a>

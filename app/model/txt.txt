@@ -1,0 +1,284 @@
+import { hashPassword } from '~/utils/hashedPassword'
+import { prisma } from './db.server'
+import { Manager } from './model'
+
+export async function isValidAdmin(admin: Manager) {
+    if (!admin.id || !admin.password) {
+        return false
+    }
+    const password = await hashPassword(admin.password)
+    const manager = await prisma.manager.findUnique({
+        where: { id: admin.id },
+    })
+
+    return manager?.id === admin.id && manager?.password === password
+}
+
+export async function isExistAdmin(adminId: string) {
+    const existingAdmin = await prisma.manager.findUnique({
+        where: { id: adminId },
+    })
+    if (existingAdmin) {
+        return true
+    }
+    return false
+}
+
+export async function createAdmin(admin: Manager) {
+    if (!admin.id || !admin.password) {
+        return false
+    }
+    const existingAdmin = await isExistAdmin(admin.id)
+    if (existingAdmin) {
+        return false
+    }
+
+    const hashedPassword = await hashPassword(admin.password)
+
+    await prisma.manager.create({
+        data: { id: admin.id, password: hashedPassword },
+    })
+
+    return true
+}
+
+export async function updateAdmin(admin: Manager) {
+    return prisma.manager.update({
+        where: { id: admin.id },
+        data: { password: admin.password },
+    })
+}
+
+
+import { prisma } from './db.server'
+import { Class } from './model'
+
+export async function getClassList(classAdmin: string) {
+    const classes = await prisma.class.findMany({
+        where: {
+            managerUuid: classAdmin,
+        },
+    })
+
+    return classes
+}
+
+export async function getClass(classUuid: string) {
+    return prisma.class.findUnique({
+        where: {
+            uuid: classUuid,
+        },
+    })
+}
+
+export async function createClass(adminUuid: string, cls: Class) {
+    if (!adminUuid || !cls.uuid) {
+        return false
+    }
+
+    const manager = await prisma.manager.findUnique({
+        where: { uuid: adminUuid },
+    })
+
+    if (!manager) {
+        return false
+    }
+
+    const existingClass = await prisma.class.findFirst({
+        where: {
+            managerUuid: adminUuid,
+            name: cls.name,
+        },
+    })
+
+    if (existingClass) {
+        return false
+    }
+
+    await prisma.class.create({
+        data: {
+            id: cls.id,
+            name: cls.name,
+            managerUuid: adminUuid,
+        },
+    })
+
+    return true
+}
+
+export async function updateClass(cls: Class) {
+    return prisma.class.update({
+        where: {
+            uuid: cls.uuid,
+        },
+        data: {
+            name: cls.name,
+        },
+    })
+}
+
+
+import { Room } from './model'
+import { prisma } from './db.server'
+
+export async function getRoom(classUuid: string) {
+    return prisma.room.findFirst({
+        where: { classUuid: classUuid },
+    })
+}
+
+export async function createRoom(classUuid: string, room: Room) {
+    return prisma.room.create({
+        data: {
+            row: room.row,
+            column: room.column,
+            seatAmount: room.seatAmount,
+            finished: room.finished,
+            classUuid: classUuid,
+        },
+    })
+}
+
+export async function updateRoom(classUuid: string, room: Room) {
+    return prisma.room.updateMany({
+        where: { classUuid: classUuid },
+        data: room,
+    })
+}
+
+import { prisma } from './db.server'
+import { Seat } from './model'
+
+export async function getSeats(roomUuid: string): Promise<Seat[][]> {
+    const seats = await prisma.seat.findMany({
+        where: { roomUuid: roomUuid },
+        include: { students: true },
+    })
+
+    const maxRow = Math.max(...seats.map((seat) => seat.row))
+    const maxColumn = Math.max(...seats.map((seat) => seat.column))
+
+    const seatArray: Seat[][] = Array.from({ length: maxRow + 1 }, () =>
+        Array.from({ length: maxColumn + 1 }, () => ({ isAvailable: false, seatStudents: [] })),
+    )
+
+    seats.forEach((seat) => {
+        seatArray[seat.row][seat.column] = {
+            isAvailable: seat.isAvailable,
+            seatStudents: seat.students,
+        }
+    })
+
+    return seatArray
+}
+
+export async function createSeats(roomUuid: string, seats: Seat[][]) {
+    const createPromises = seats.flatMap((rowSeats, row) =>
+        rowSeats.map((seat, column) =>
+            prisma.seat.create({
+                data: {
+                    row: row,
+                    column: column,
+                    isAvailable: seat.isAvailable,
+                    roomUuid: roomUuid,
+                    students: {
+                        connect: seat.seatStudents.map((student) => ({ uuid: student.uuid })),
+                    },
+                },
+            }),
+        ),
+    )
+
+    await Promise.all(createPromises)
+}
+
+export async function updateSeats(roomUuid: string, seats: Seat[][]) {
+    const updatePromises = seats.flatMap((rowSeats, row) =>
+        rowSeats.map((seat, column) =>
+            prisma.seat.update({
+                where: {
+                    uuid: seat.uuid!,
+                },
+                data: {
+                    isAvailable: seat.isAvailable,
+                    students: {
+                        set: seat.seatStudents.map((student) => ({ uuid: student.uuid })),
+                    },
+                },
+            }),
+        ),
+    )
+
+    await Promise.all(updatePromises)
+}
+
+import { prisma } from './db.server'
+import { Student } from './model'
+
+export async function getStudentList(classUuid: string) {
+    return prisma.student.findMany({
+        where: {
+            classUuid: classUuid,
+        },
+    })
+}
+
+export async function getStudent(classUuid: string, studentUuid: string) {
+    return prisma.student.findFirst({
+        where: {
+            uuid: studentUuid,
+        },
+    })
+}
+
+export async function createStudent(classUuid: string, student: Student) {
+    return prisma.student.create({
+        data: {
+            ...student,
+            classUuid: classUuid,
+        },
+    })
+}
+
+export async function createStudents(classUuid: string, students: Array<Student>) {
+    return prisma.student.createMany({
+        data: students.map((student) => ({
+            ...student,
+            classUuid: classUuid,
+        })),
+    })
+}
+
+export async function updateStudent(classUuid: string, student: Student) {
+    return prisma.student.update({
+        where: {
+            uuid: student.uuid,
+        },
+        data: student,
+    })
+}
+
+export async function updateStudents(classUuid: string, students: Array<Student>) {
+    return prisma.student.updateMany({
+        where: {
+            classUuid: classUuid,
+        },
+        data: students.map((student) => ({
+            ...student,
+        })),
+    })
+}
+
+export async function isValidStudent(userId: string, classId: string) {
+    const student = await prisma.student.findFirst({
+        where: {
+            id: userId,
+            classUuid: classId,
+        },
+    })
+    if (student) {
+        return true
+    } else {
+        return false
+    }
+}

@@ -1,71 +1,43 @@
+import { createAdmin, isExistAdmin, isExistAdminByUuid } from '~/model/admin.server'
+import { createClass, getClassList as getClasses } from '~/model/class.server'
 import { Class, Manager } from '~/model/model'
 
-
-export type ClassList = {
-    [managerId: string]: Array<Class>
-}
-export let adminList: Manager[] = [{
-    id:"test",
-    password:"test"
-}]
-
-export let classList: ClassList = {}
-
-export function isValidUsr(user: Manager) {
-    if (!user.id || !user.password) {
-        return false
-    }
-    // 変更加わると思うから、一つにまとめる。
-    // ユーザがいなければ
-    //パスワードが一致するなら
-    return adminList.some((manager) => manager.id === user.id && manager.password === user.password) 
-}
-
 // createUser
-export function pushUsr(user: Manager) {
+export async function pushUsr(user: Manager) {
     if (!user.id || !user.password) {
         return false
     }
     // 既にユーザ名が存在する場合はfalseを返す
-    if (adminList.some((manager) => manager.id === user.id)) {
-
+    const isExist = await isExistAdmin(user.id)
+    if (isExist) {
         return false
     }
 
     // データ生成
-    adminList = [...adminList, { id: user.id, password: user.password }]
 
-    classList[user.id] = []
+    await createAdmin(user)
     return true
 }
 
 // createClass
-export function addClass(usrId: string ,cls: Class) {
-    console.log("addClass")
-    if (!usrId || !cls.id) {
+export async function addClass(usrUuid: string, cls: Class) {
+    if (!usrUuid || !cls.id) {
         return false
     }
     //ユーザが存在しないならエラー
-    if (!adminList.some((manager) => manager.id === usrId)) {
-
+    const isExist = await isExistAdminByUuid(usrUuid)
+    if (!isExist) {
         return false
     }
     // TODO
     // クラス名が被っている場合にエラー出力
-    console.log(classList[usrId])
     // if (classList[usrId].some((c) => c.name === cls.name)) {
     //     return false
     // }
-
-    // データ生成
-    classList = {
-        ...classList,
-        [usrId]: [...classList[usrId], cls],
-    }
+    await createClass(usrUuid, cls)
     return true
 }
 
-// 仮置き
-export const getClassList = (classAdmin: string) => {
-    return classList[classAdmin] || []
+export async function getClassList(adminUuid: string) {
+    return await getClasses(adminUuid)
 }

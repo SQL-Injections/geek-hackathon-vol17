@@ -13,9 +13,10 @@ const cookieSessionStorage = createCookieSessionStorage({
     },
 })
 
-export async function createUserSession(userId: string, redirectPath: string) {
+export async function createUserSession(userId: string, userUuid: string, redirectPath: string) {
     const session = await cookieSessionStorage.getSession()
     session.set('usrId', userId)
+    session.set('usrUuid', userUuid)
     session.set('role', 'admin')
     return redirect(redirectPath, {
         headers: {
@@ -37,12 +38,13 @@ export async function getUserFromSession(request: Request) {
     const session = await cookieSessionStorage.getSession(request.headers.get('Cookie'))
 
     const usrId: string = session.get('usrId')
+    const usrUuid: string = session.get('usrUuid')
 
     if (!usrId) {
         return null
     }
 
-    return { usrId }
+    return { usrId, usrUuid }
 }
 
 export async function logoutUser(request: Request) {

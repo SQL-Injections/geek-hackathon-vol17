@@ -5,20 +5,17 @@ import { seatMargin, seatSize } from 'app/config'
 import { useFetcher } from '@remix-run/react'
 import { Room, Seat as SeatType, Student } from '~/model/model'
 
-const SelectableSeatSet: React.FC<{ user: Student; classId: string; defaultSeats: Room }> = ({
+const SelectableSeatSet: React.FC<{ user: Student; classUuid: string; defaultSeats: Room }> = ({
     user,
-    classId,
+    classUuid,
     defaultSeats,
 }) => {
     const containerRef = useRef<HTMLDivElement>(null)
     // 1次元に変換する
     const totalSeats = defaultSeats.seats.length * defaultSeats.seats[0].length
     const columnCount = defaultSeats.seats[0].length
-    const [enableSeats, setEnableSeats] = useState(
-        //seatsの中身を1次元に
-        defaultSeats.seats.flat(1),
-    )
-    const fetcher = useFetcher()
+    const [enableSeats, setEnableSeats] = useState(defaultSeats.seats.flat())
+    const fetcher = useFetcher<{ seat: Array<Array<SeatType>> }>()
 
     // データ更新時
     //  サーバー側のデータを更新する
@@ -40,11 +37,8 @@ const SelectableSeatSet: React.FC<{ user: Student; classId: string; defaultSeats
         // fetcherを使用してユーザーデータを確認
         fetcher.submit(
             {
-                user: {
-                    id: user.id,
-                    displayName: user.displayName,
-                },
-                classId: classId,
+                user: user,
+                classUuid: classUuid,
                 x: Math.floor(index % columnCount),
                 y: Math.floor(index / columnCount),
                 function: 'modifyClass',
@@ -55,8 +49,8 @@ const SelectableSeatSet: React.FC<{ user: Student; classId: string; defaultSeats
 
     useEffect(() => {
         // fetcherのレスポンスをチェック
-        if (fetcher.data) {
-            setEnableSeats((fetcher.data as Array<Array<boolean | Array<{ id: string; displayName: string }>>>).flat(1))
+        if (fetcher.data && fetcher.data.seat) {
+            setEnableSeats(fetcher.data.seat.flat())
         }
     }, [fetcher.data])
 
@@ -69,20 +63,23 @@ const SelectableSeatSet: React.FC<{ user: Student; classId: string; defaultSeats
                             //その場所を誰が選択しているかを返す
                             key={index}
                             margin={seatMargin}
-                            onClick={() => {(
-                                enableSeats[index] ? modifySeats(index) : null
-                                )}
-                            }
+                            onClick={() => {
+                                enableSeats[index].isAvailable ? modifySeats(index) : null
+                            }}
                         >
                             <Seat
                                 text={
-                                    typeof enableSeats[index] == 'boolean'
+                                    !enableSeats[index].seatStudents
                                         ? ''
-                                        : Array.from(enableSeats[index])
-                                            .map((seat) => `${seat.displayName ? seat.displayName : seat.id}`)
-                                            .join(', ')
+                                        : enableSeats[index].seatStudents
+                                              .map(
+                                                  (student) =>
+                                                      `${student.displayName ? student.displayName : student.id}`,
+                                              )
+                                              .join(', ')
                                 }
-                                isDisabled={!enableSeats[index]}
+                                isReserved={enableSeats[index].seatStudents.length > 0}
+                                isDisabled={!enableSeats[index].isAvailable}
                             />
                         </Box>
                     )

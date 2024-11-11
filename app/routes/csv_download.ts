@@ -1,17 +1,12 @@
 import { LoaderFunctionArgs } from '@remix-run/node'
-import { ClassStudents, getStudentList } from './assets/student_dat'
+import { getStudentList } from './assets/student_dat'
 import { Student } from '~/model/model'
 
 export async function action({ request }: LoaderFunctionArgs) {
     const formData = await request.formData()
-    console.log(formData)
-    const classId = formData.get('class_id') as string
-    console.log('classId : ', classId)
-    console.log('classId : ', typeof classId)
-    if (classId != undefined) {
-        const studentListPromise = await getStudentList(classId)
-        const studentList = studentListPromise
-        console.log(studentList)
+    const classUuid = formData.get('class_uuid') as string
+    if (classUuid) {
+        const studentList = await getStudentList(classUuid)
         if (!studentList) {
             return false
         } else {

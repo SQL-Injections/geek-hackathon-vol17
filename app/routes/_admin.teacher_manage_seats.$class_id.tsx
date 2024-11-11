@@ -7,32 +7,28 @@ import { LoaderFunctionArgs } from '@remix-run/node'
 import { requireUserSession } from './assets/admin_auth.server'
 import { getClassList } from './assets/admin_dat'
 import { getStudentList } from './assets/student_dat'
-import { Room } from '~/model/model'
+import { Room, Seat } from '~/model/model'
 import styles from '~/styles/write_my_seats.module.css'
 import html2canvas from 'html2canvas';
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
     const data = await requireUserSession(request)
-    const adminId = data.usrId
-    const classListPromise = getClassList(adminId)
-    const classList = await classListPromise
-
+    const adminUuid = data.usrUuid
+    const classList = await getClassList(adminUuid)
     const classId = params.class_id || ''
     const existClass = classList.find((cls) => cls.id === classId)
-
     if (!existClass) {
-        return json({ classId, room: null, studentList: [] })
+        return json({ classUuid: '', room: null, studentList: [] })
     }
+    const classUuid = existClass.uuid
 
-    const room = idToClassSeats(classId)
-    const studentListPromise = getStudentList(classId)
-    const studentList = await studentListPromise
+    const room = await idToClassSeats(classUuid)
 
-    return json({ classId, room, studentList })
+    return json({ classUuid, room })
 }
 
 export default function Index() {
-    const { classId, room: r, studentList } = useLoaderData<typeof loader>()
+    const { classUuid, room: r } = useLoaderData<typeof loader>()
 
     if (!r) {
         return (
@@ -44,15 +40,13 @@ export default function Index() {
 
     const [finished, setFinished] = useState(r?.finished || false)
     const [room, setRoom] = useState<Room>(r)
-    const fetcher = useFetcher()
-
-    console.log(room)
+    const fetcher = useFetcher<{ seat: Seat[][]; finished: boolean }>()
 
     const handleFinish = () => {
         fetcher.submit(
             {
-                classId: classId,
-                function: 'toggleFinished',
+                classUuid: classUuid,
+                function: 'handleFinishedSeats',
             },
             { method: 'post', action: `/class_dat`, encType: 'application/json' },
         )
@@ -76,11 +70,12 @@ export default function Index() {
         // fetcherのレスポンスをチェック
         console.log('fetcher.data', fetcher.data)
         if (fetcher.data) {
-            setFinished(fetcher.data.finished)
+            const { seat, finished } = fetcher.data
+            setFinished(finished)
             setRoom((prevRoom) => ({
                 ...prevRoom,
-                seats: fetcher.data.seat,
-                finished: fetcher.data.finished,
+                seats: seat,
+                finished: finished,
             }))
         }
     }, [fetcher.data])

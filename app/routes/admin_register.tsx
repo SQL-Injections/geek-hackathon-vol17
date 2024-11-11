@@ -15,7 +15,8 @@ export default function Index() {
     const [usrId, setUsrId] = useState<string>()
     const [password, setPassword] = useState<string>()
     const [classId, setClassId] = useState<string>()
-    const fetcher = useFetcher()
+    const fetcher = useFetcher<{ pushUsr: Function }>()
+
 
     const [isVisible, setIsVisible] = useState(false)
     useEffect(() => {
@@ -40,6 +41,7 @@ export default function Index() {
     return (
         <>
             <Header />{' '}
+
             <fetcher.Form method='post' action='/admin_dat'>
                 <div className={styles.container} style={{ height: '250px' }}>
                     <div className={styles.container_title}>管理者用idを入力してください</div>

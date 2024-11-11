@@ -1,34 +1,19 @@
 import { Student } from '~/model/model'
+import { createStudent, createStudents, getStudentList as getStudents, getStudentById as getStudentByI } from '~/model'
 
-export type ClassStudents = {
-    [classId: string]: Array<Student>
-}
-const studentDat: ClassStudents = {
-    '1': [
-        {
-            id: '1',
-            displayName: '山田太郎',
-        },
-    ],
-}
-
-export async function isValidUsr(userId: string, classId: string) {
-    const studentList = studentDat[classId]
-    console.log(userId, classId)
-    if (!userId || !classId) {
-        return false
-    }
-    return studentList.some((student) => student.id === userId)
-}
-
-// createStudent
-export async function pushUsr(user: Array<Student>, classId: string) {
-    studentDat[classId] = user
+// 複数の学生を追加する関数
+export async function pushUsr(users: Array<Student>, classUuid: string) {
+    await createStudents(classUuid, users)
     return true
 }
 
-export const getStudentList = async (classId: string) => {
-    return studentDat[classId]
+// 指定されたクラスIDの学生リストを取得する関数
+export async function getStudentList(classUuid: string): Promise<Array<Student>> {
+    return getStudents(classUuid)
+}
+
+export async function getStudentById(classUuid: string, studentId: string) {
+    return getStudentByI(classUuid, studentId)
 }
 
 // rename displayName

@@ -1,29 +1,23 @@
 import { Box } from '@chakra-ui/react'
 import type { MetaFunction, LoaderFunctionArgs } from '@remix-run/node'
-import { redirect } from '@remix-run/node'
 import { json, useLoaderData, Form, useFetcher } from '@remix-run/react'
-import { create } from 'framer-motion/client'
 import { useEffect, useState } from 'react'
-import { SeatArrangement, AdminLogout as Logout } from '~/original-components'
-import Seat from '~/original-components/Seat'
+import { SeatArrangement } from '~/original-components'
 import { requireUserSession } from './assets/admin_auth.server'
 import styles from '~/styles/input_seats_amount.module.css'
-import { Seat as SeatType } from '~/model/model'
+import { Seat as SeatType, Student } from '~/model/model'
 
 export const meta: MetaFunction = () => {
     return [{ title: 'New Remix App' }, { name: 'description', content: 'Welcome to Remix!' }]
 }
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-    // sessionからデータを取り出す
     const data = await requireUserSession(request)
-    const usrId = data.usrId
-
-    return json({ usrId: usrId })
+    const adminUuid = data.usrUuid
+    return json({ adminUuid })
 }
 
 export default function Index() {
-    //clientでやってほしいので
     const [seatsAmount, setSeatsAmount] = useState(1)
     const [className, setClassName] = useState('')
     const [isInputted, setIsInputted] = useState(false)
@@ -32,17 +26,16 @@ export default function Index() {
     const [errMsg, setErrMsg] = useState('')
     const [isConfirmed, setIsConfirmed] = useState(false)
     const [SeatsArray, setSeatsArray] = useState<Array<SeatType[]>>([])
+    const [classId, setClassId] = useState<string>('')
     const fetcher = useFetcher()
-    const admin = useLoaderData() as { usrId: string }
-    /*************  ✨ Codeium Command ⭐  *************/
-    /**
-     * input seats amount and show the second container
-     * @returns {void}
-     */
-    /******  3d251e3f-7e9e-4df8-840c-b57c63aa7efc  *******/
+    const admin = useLoaderData<typeof loader>()
 
     const createSeatArray = (row: number, column: number) => {
-        return Array.from({ length: row }, () => Array.from({ length: column }, () => true))
+        return Array.from({ length: row }, () =>
+            Array.from({ length: column }, () => {
+                return { isAvailable: true, seatStudents: [] }
+            }),
+        )
     }
 
     useEffect(() => {
@@ -50,24 +43,14 @@ export default function Index() {
     }, [height, width])
 
     function clickedSeatsAmount() {
-        // 一応確認
-        console.log('isinputted:' + isInputted)
-        // 二つ目のコンテナを表示する
         setIsInputted(true)
-        //いい感じにheightとwidthの初期値を決定する
         const sqrt = Math.sqrt(seatsAmount)
-        //整数に
         setHeight(Math.floor(sqrt) + 1)
         setWidth(Math.floor(sqrt))
     }
 
     function clickedWHAmount() {
-        // 一応確認
-        console.log(isInputted)
-        // 二つ目のコンテナを表示する
-        if (!validateInputs()) {
-            return
-        }
+        if (!validateInputs()) return
         setIsConfirmed(true)
     }
 
@@ -82,31 +65,19 @@ export default function Index() {
         return true
     }
 
-    // function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    //     // フォーム送信前にバリデーションを実行
-    //     if (!validateInputs()) {
-    //         event.preventDefault() // バリデーションに失敗した場合、送信をブロック
-    //     }
-    //     // 動的にURLを設定する
-    //     const form = event.currentTarget
-    //     form.action = `/management_classes`
-    // }
-
     const handleValueChange = (newValue: Array<Array<SeatType>>) => {
-        console.log('newValue:', newValue)
         setSeatsArray(newValue)
     }
 
-    function createClass(event: React.FormEvent<HTMLFormElement>) {
-        //クラス情報を追加する
-        //とりあえずidをランダム生成
-        const id = Math.floor(Math.random() * 10000000)
-        console.log('Seats:', SeatsArray)
-        console.log('id:', id)
-        // SeatsArrayの有効座席がSeatsAmount個なら
-        if (SeatsArray.flat().filter((seat) => seat).length === seatsAmount) {
-            console.log('クラス作成')
-            //クラスを作成する
+    async function createClass(event: React.FormEvent<HTMLFormElement>) {
+        const classId = String(Math.floor(Math.random() * 10000000))
+
+        if (SeatsArray.flat().filter((seat) => seat.isAvailable).length === seatsAmount) {
+            fetcher.submit(
+                { admin_uuid: admin.adminUuid, class_id: classId, class_name: className, function: 'addClass' },
+                { method: 'post', action: '/admin_dat' },
+            )
+
             const roomDat = {
                 row: height,
                 column: width,
@@ -114,57 +85,43 @@ export default function Index() {
                 isFinished: false,
                 seats: SeatsArray,
             }
+
             fetcher.submit(
-                { classId: String(id), classInfo: JSON.stringify(roomDat) },
+                { classId: classId, classInfo: JSON.stringify(roomDat), function: 'addClassInfo' },
                 { method: 'post', action: `/class_dat`, encType: 'application/json' },
             )
 
-            const formData = new FormData()
-            formData.append('usr_id', admin.usrId)
-            formData.append('class_id', id.toString())
-            formData.append('class_name', className.toString())
-            formData.append('function', 'addClass')
-
-            fetcher.submit(formData, { method: 'post', action: '/admin_dat' })
-
-            const student_ids = []
+            const student_ids: Student[] = []
             const id_set = [...Array(1000)].map((_, i) => i)
             for (let i = 0; i < seatsAmount; i++) {
                 let rand = Math.floor(Math.random() * id_set.length)
                 if (rand === id_set.length) rand = id_set.length - 1
                 const value = id_set.splice(rand, 1)
-                student_ids.push({ id: value.toString(), name: '' })
+                student_ids.push({ id: value.toString(), displayName: '' })
             }
-            console.log(student_ids)
-
             fetcher.submit(
-                {
-                    classId: id.toString(),
-                    student_ids: JSON.stringify(student_ids),
-                },
+                { classId: classId, student_ids: JSON.stringify(student_ids) },
                 { method: 'post', action: '/student_dat', encType: 'application/json' },
             )
-            // event.currentTarget.action = `/management_classes`
         } else {
-            console.log('有効な座席を入力してください')
-            // とりあえず
             alert(
                 `選択した席数${seatsAmount}に対して現在選択中の席数は${
                     SeatsArray.flat().filter((seat) => seat).length
                 }個です。`,
             )
-            // キャンセル
-            event.preventDefault()
         }
     }
 
     const onClick = (rowCountIndex: number, columnIndex: number) => {
-        setSeatsArray((prevSeats) => {
-            const newSeats = prevSeats.map((row, rowIndex) =>
-                row.map((seat, colIndex) => (rowIndex === rowCountIndex && colIndex === columnIndex ? !seat : seat)),
-            )
-            return newSeats
-        })
+        setSeatsArray((prevSeats) =>
+            prevSeats.map((row, rowIndex) =>
+                row.map((seat, colIndex) =>
+                    rowIndex === rowCountIndex && colIndex === columnIndex
+                        ? { ...seat, isAvailable: !seat.isAvailable }
+                        : seat,
+                ),
+            ),
+        )
     }
 
     const room = {
@@ -202,7 +159,7 @@ export default function Index() {
                         className={styles.seats_amount_input}
                     />
                     <button
-                        type='submit'
+                        type='button'
                         className={styles.seats_amount_button}
                         disabled={isInputted}
                         onClick={clickedSeatsAmount}
@@ -245,12 +202,10 @@ export default function Index() {
                         disabled={isConfirmed}
                     />
                     <button
-                        type='submit'
+                        type='button'
                         className={styles.wh_length_button}
                         disabled={isConfirmed}
-                        onClick={() => {
-                            setIsConfirmed(true)
-                        }}
+                        onClick={clickedWHAmount}
                     >
                         確定
                     </button>

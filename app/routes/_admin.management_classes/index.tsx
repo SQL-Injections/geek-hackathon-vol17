@@ -1,13 +1,12 @@
 import { json, useLoaderData, Link, useFetcher } from '@remix-run/react'
 import { getClassList } from '../assets/admin_dat'
 import type { LoaderFunctionArgs } from '@remix-run/node'
-import { Box, Flex, CardBody, Container, Heading, SimpleGrid } from '@chakra-ui/react'
+import { Box, Flex, Container, Heading } from '@chakra-ui/react'
 import { Button } from '../../components/ui/button'
 import { Class } from '~/model/model'
 import { requireUserSession } from '../assets/admin_auth.server'
 
 import { useEffect } from 'react'
-import { AdminLogout as Logout } from '~/original-components'
 
 import styles from '../../styles/management_classes.module.css'
 
@@ -15,9 +14,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     // sessionからデータを取り出す
     const data = await requireUserSession(request)
 
-    const { usrId } = data
+    const { usrUuid } = data
 
-    const classList = getClassList(usrId)
+    const classList = await getClassList(usrUuid)
     return json({ classes: classList })
 }
 
@@ -25,12 +24,10 @@ export default function Index() {
     const fetcher = useFetcher()
 
     const { classes } = useLoaderData<typeof loader>()
-    function DownloadCsv(class_id: string) {
-        console.log('class_id = ', class_id)
-        let classId = class_id
 
+    function DownloadCsv(classUuid: string) {
         const formData = new FormData()
-        formData.append('class_id', classId)
+        formData.append('class_uuid', classUuid)
         console.log(formData)
 
         console.log('fetcher定義')
@@ -40,7 +37,6 @@ export default function Index() {
     useEffect(() => {
         // fetcherのレスポンスをチェック
         if (fetcher.data) {
-            console.log('Fetcher data:', fetcher.data)
             console.log(fetcher.data)
             // バリデーションが成功した場合のみフォーム送信
             if (fetcher.data) {
@@ -82,53 +78,58 @@ export default function Index() {
                     クラス一覧
                 </Box>
                 <div className={styles.Class_list}>
-                    {classes.map((cls: Class, index: number) => (
-                        // とりあえず、className
-                        <>
-                            <Flex
-                                minWidth={'200px'}
-                                height='10vh'
-                                justify='space-between'
-                                borderRadius='lg'
-                                overflow='hidden'
-                                bg='blue.50'
-                                m={"3px"}
-                            >
-                                <Link
-                                    to={`/teacher_manage_seats/${cls.id}`}
-                                    key={index}
-                                    style={{ textDecoration: 'none' }
-                                }
+                    {classes.map((cls: Class, index: number) => {
+                        const classUuid = cls.uuid
+                        if (!classUuid) {
+                            return null
+                        }
+                        return (
+                            // とりあえず、className
+                            <>
+                                <Flex
+                                    minWidth={'200px'}
+                                    height='10vh'
+                                    justify='space-between'
+                                    borderRadius='lg'
+                                    overflow='hidden'
+                                    bg='blue.50'
+                                    m={'3px'}
                                 >
-                                    <Box
-                                        overflow='scroll'
-                                        height={'100%'}
-                                        width={"100%"}
-                                        bg='blue.50'
-                                        _hover={{
-                                            bg: 'blue.100',
-                                            shadow: 'md',
-                                        }}
-                                        textAlign='center'
+                                    <Link
+                                        to={`/teacher_manage_seats/${cls.id}`}
+                                        key={index}
+                                        style={{ textDecoration: 'none' }}
                                     >
-                                        <Heading size='md' color='blue.800'>
-                                            {cls.name}
-                                            <br />
-                                            classId:{cls.id}
-                                        </Heading>
-                                    </Box>
-                                </Link>
-                                <Link to={`/show_class_id/${cls.id}`}>
-                                    <div className={styles.classId_btn}>ClassIDを見る</div>
-                                </Link>
-                                <button className={styles.download_btn} onClick={() => DownloadCsv(cls.id)}>
-                                    <span className={styles.dli_box_in}>
-                                        <span></span>
-                                    </span>
-                                </button>
-                            </Flex>
-                        </>
-                    ))}
+                                        <Box
+                                            overflow='scroll'
+                                            height={'100%'}
+                                            width={'100%'}
+                                            bg='blue.50'
+                                            _hover={{
+                                                bg: 'blue.100',
+                                                shadow: 'md',
+                                            }}
+                                            textAlign='center'
+                                        >
+                                            <Heading size='md' color='blue.800'>
+                                                {cls.name}
+                                                <br />
+                                                classId:{cls.id}
+                                            </Heading>
+                                        </Box>
+                                    </Link>
+                                    <Link to={`/show_class_id/${cls.id}`}>
+                                        <div className={styles.classId_btn}>ClassIDを見る</div>
+                                    </Link>
+                                    <button className={styles.download_btn} onClick={() => DownloadCsv(classUuid)}>
+                                        <span className={styles.dli_box_in}>
+                                            <span></span>
+                                        </span>
+                                    </button>
+                                </Flex>
+                            </>
+                        )
+                    })}
                 </div>
 
                 <Button variant='surface'>
