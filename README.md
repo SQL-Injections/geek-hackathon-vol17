@@ -38,7 +38,7 @@
 
 ### 環境変数の設定
 
-1. プロジェクトのルートディレクトリに `.env.develop` ファイルを作成します:
+1. プロジェクトのルートディレクトリに `.env` ファイルを作成します:
 
     ```bash
     touch .env
@@ -47,8 +47,14 @@
 2. 以下の内容を `.env` に追加します:
 
     ```env
-    # SQLiteを使用する場合
+    # SQLiteを使用する場合 ローカル環境
     DATABASE_URL="file:./dev.db"
+
+    # 教師用のセッション
+    ADMIN_SESSION_SECRET
+
+    # 生徒用のセッション
+    STUDENT_SESSION_SECRET
     ```
 
 ## アプリケーションの起動
