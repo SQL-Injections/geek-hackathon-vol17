@@ -21,7 +21,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 }
 
 export default function Index() {
-    const fetcher = useFetcher()
+    const fetcher = useFetcher<string>()
 
     const { classes } = useLoaderData<typeof loader>()
 
