@@ -1,5 +1,4 @@
-import { createAdmin, isExistAdmin, isExistAdminByUuid } from '~/model/admin.server'
-import { createClass, getClassList as getClasses } from '~/model/class.server'
+import { createAdmin, isExistAdmin, isExistAdminByUuid, createClass, getClassList as getClasses } from '~/model'
 import { Class, Manager } from '~/model/model'
 
 // createUser

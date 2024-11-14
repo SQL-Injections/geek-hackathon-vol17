@@ -1,7 +1,6 @@
 import { createCookieSessionStorage, redirect } from '@remix-run/node'
 import { createUserSession } from './student_auth.server'
-import { getStudentById, isValidStudent, updateStudent } from '~/model/student.server'
-import { getClassById } from './class_dat'
+import { getStudentById, isValidStudent, updateStudent, getClassById } from '~/model'
 
 import { reName } from './student_dat'
 

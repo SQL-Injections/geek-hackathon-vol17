@@ -1,6 +1,6 @@
 import { createCookieSessionStorage, redirect } from '@remix-run/node'
 import { createUserSession } from './admin_auth.server'
-import { getAdmin, isValidAdmin } from '~/model/admin.server'
+import { getAdmin, isValidAdmin } from '~/model'
 
 export async function login({ usr_id, password }: { usr_id: string; password: string }) {
     const UserObj = { id: usr_id, password: password }
