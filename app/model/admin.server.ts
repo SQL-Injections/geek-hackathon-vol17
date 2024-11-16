@@ -3,7 +3,7 @@ import { prisma } from './db.server'
 import { Manager } from './model'
 
 export async function getAdmin(id: string) {
-    return prisma.manager.findUnique({
+    return prisma.manager.findFirst({
         where: { id: id },
     })
 }
