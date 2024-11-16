@@ -1,13 +1,14 @@
 import { Box } from '@chakra-ui/react'
 import { json } from '@remix-run/node'
 import type { MetaFunction, LoaderFunctionArgs } from '@remix-run/node'
-import { useLoaderData, Form } from '@remix-run/react'
+import { useLoaderData, Form, useFetcher } from '@remix-run/react'
 import styles from '~/styles/write_my_seats.module.css'
-import SelectableSeatSet from '~/original-components/SelectableSeatSet'
 import { getClassById, idToClassSeats } from './assets/class_dat'
 import { useNavigate } from '@remix-run/react'
 import { requireUserSession } from './assets/student_auth.server'
-import { Student } from '~/model/model'
+import { Room, Seat, Student } from '~/model/model'
+import { SeatArrangement } from '~/original-components'
+import { useEffect, useState } from 'react'
 
 export const meta: MetaFunction = () => {
     return [{ title: 'New Remix App' }, { name: 'description', content: 'Welcome to Remix!' }]
@@ -24,15 +25,34 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function Index() {
     // とりあえずクエリを取り出す
-    const fetch = useLoaderData<typeof loader>()
+    const { usrId, usrUuid, classUuid, usrName, seatsDat } = useLoaderData<typeof loader>()
     const navigate = useNavigate()
+    const fetcher = useFetcher()
+    const [room, setRoom] = useState<Room>(seatsDat)
 
-    const seatDat = fetch.seatsDat
-    if (!seatDat) {
-        return <div>loading...</div>
+    const student: Student = { id: usrId, displayName: usrName, uuid: usrUuid }
+
+    const onClick = (rowCountIndex: number, columnIndex: number) => {
+        console.log(rowCountIndex, columnIndex)
+        if (room.finished) return
+
+        fetcher.submit(
+            { user: student, classUuid: classUuid, x: columnIndex, y: rowCountIndex, function: 'modifyClass' },
+            { method: 'post', action: `/class_dat`, encType: 'application/json' },
+        )
     }
 
-    const student: Student = { id: fetch.usrId, displayName: fetch.usrName, uuid: fetch.usrUuid }
+    useEffect(() => {
+        // fetcherのレスポンスをチェック
+        if (fetcher.data) {
+            const seats: Array<Array<Seat>> = fetcher.data as Array<Array<Seat>>
+            setRoom((prevRoom) => {
+                const newRoom = { ...prevRoom }
+                newRoom.seats = seats
+                return newRoom
+            })
+        }
+    }, [fetcher.data])
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         console.log('submit', '\n\n\n\n')
@@ -44,18 +64,13 @@ export default function Index() {
         <>
             <div className={styles.seats_container} style={{ display: 'block' }}>
                 <div className={styles.seats_amount_text}>
-                    {fetch.seatsDat.finished
+                    {seatsDat.finished
                         ? '席替えは終了しました'
                         : '自身が移動したい席を選択してください(色の薄い席は無効です)'}
                 </div>
                 <div className={styles.seats}>
                     <Box className={`mx-auto ${styles.seats_boxes}`}>
-                        <SelectableSeatSet
-                            key={JSON.stringify(fetch.seatsDat)}
-                            user={student}
-                            classUuid={fetch.classUuid}
-                            defaultSeats={fetch.seatsDat}
-                        />
+                        <SeatArrangement room={room} onClick={onClick} />
                     </Box>
                 </div>
                 <Form onSubmit={handleSubmit}>
