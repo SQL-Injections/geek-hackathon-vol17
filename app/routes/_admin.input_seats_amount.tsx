@@ -24,6 +24,7 @@ export default function Index() {
     const [height, setHeight] = useState<number>(0)
     const [width, setWidth] = useState<number>(0)
     const [errMsg, setErrMsg] = useState('')
+    const [classCreateError, setClassCreateError] = useState('')
     const [isConfirmed, setIsConfirmed] = useState(false)
     const [SeatsArray, setSeatsArray] = useState<Array<SeatType[]>>([])
     const [classId, setClassId] = useState<string>('')
@@ -70,46 +71,48 @@ export default function Index() {
     }
 
     async function createClass(event: React.FormEvent<HTMLFormElement>) {
-        const classId = String(Math.floor(Math.random() * 10000000))
-
-        if (SeatsArray.flat().filter((seat) => seat.isAvailable).length === seatsAmount) {
-            fetcher.submit(
-                { admin_uuid: admin.adminUuid, class_id: classId, class_name: className, function: 'addClass' },
-                { method: 'post', action: '/admin_dat' },
-            )
-
-            const roomDat = {
-                row: height,
-                column: width,
-                seatAmount: seatsAmount,
-                isFinished: false,
-                seats: SeatsArray,
-            }
-
-            fetcher.submit(
-                { classId: classId, classInfo: JSON.stringify(roomDat), function: 'addClassInfo' },
-                { method: 'post', action: `/class_dat`, encType: 'application/json' },
-            )
-
-            const student_ids: Student[] = []
-            const id_set = [...Array(1000)].map((_, i) => i)
-            for (let i = 0; i < seatsAmount; i++) {
-                let rand = Math.floor(Math.random() * id_set.length)
-                if (rand === id_set.length) rand = id_set.length - 1
-                const value = id_set.splice(rand, 1)
-                student_ids.push({ id: value.toString(), displayName: '' })
-            }
-            fetcher.submit(
-                { classId: classId, student_ids: JSON.stringify(student_ids) },
-                { method: 'post', action: '/student_dat', encType: 'application/json' },
-            )
-        } else {
-            alert(
+        if (SeatsArray.flat().filter((seat) => seat).length !== seatsAmount) {
+            console.log('現在選択中の席数は', SeatsArray.flat().filter((seat) => seat).length)
+            setClassCreateError(
                 `選択した席数${seatsAmount}に対して現在選択中の席数は${
                     SeatsArray.flat().filter((seat) => seat).length
                 }個です。`,
             )
+            event.preventDefault()
+            return
         }
+        const classId = String(Math.floor(Math.random() * 10000000))
+
+        fetcher.submit(
+            { admin_uuid: admin.adminUuid, class_id: classId, class_name: className, function: 'addClass' },
+            { method: 'post', action: '/admin_dat' },
+        )
+
+        const roomDat = {
+            row: height,
+            column: width,
+            seatAmount: seatsAmount,
+            isFinished: false,
+            seats: SeatsArray,
+        }
+
+        fetcher.submit(
+            { classId: classId, classInfo: JSON.stringify(roomDat), function: 'addClassInfo' },
+            { method: 'post', action: `/class_dat`, encType: 'application/json' },
+        )
+
+        const student_ids: Student[] = []
+        const id_set = [...Array(1000)].map((_, i) => i)
+        for (let i = 0; i < seatsAmount; i++) {
+            let rand = Math.floor(Math.random() * id_set.length)
+            if (rand === id_set.length) rand = id_set.length - 1
+            const value = id_set.splice(rand, 1)
+            student_ids.push({ id: value.toString(), displayName: '' })
+        }
+        fetcher.submit(
+            { classId: classId, student_ids: JSON.stringify(student_ids) },
+            { method: 'post', action: '/student_dat', encType: 'application/json' },
+        )
     }
 
     const onClick = (rowCountIndex: number, columnIndex: number) => {
@@ -225,6 +228,11 @@ export default function Index() {
                         クラスを生成する
                     </button>
                 </Form>
+                {classCreateError && (
+                    <div className='relative w-full h-10 text-center text-red-500 font-bold text-base p-1 mb-4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 top-[calc(70%)]'>
+                        {classCreateError}
+                    </div>
+                )}
             </div>
         </>
     )
