@@ -13,12 +13,13 @@ export async function isValidAdmin(admin: Manager) {
     if (!admin.id || !admin.password) {
         return false
     }
+
     const manager = await getAdmin(admin.id)
     return manager?.id === admin.id && (await comparePassword(admin.password, manager.password))
 }
 
 export async function isExistAdmin(adminId: string) {
-    const existingAdmin = await prisma.manager.findUnique({
+    const existingAdmin = await prisma.manager.findFirst({
         where: { id: adminId },
     })
     if (existingAdmin) {
