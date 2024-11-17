@@ -1,12 +1,16 @@
 import { redirect } from '@remix-run/node'
 import { createCookieSessionStorage } from '@remix-run/node'
 
+const sessionSecret = process.env.ADMIN_SESSION_SECRET
+if (!sessionSecret) {
+    throw new Error('ADMIN_SESSION_SECRET must be set')
+}
+
 const cookieSessionStorage = createCookieSessionStorage({
     cookie: {
         name: 'admin__session',
         secure: process.env.NODE_ENV === 'production',
-        //一旦直で
-        secrets: ['kRyDcxor1dQgCXM4b4wtCeIoRi7dveedI/ZDUOwT96A='],
+        secrets: [sessionSecret],
         sameSite: 'lax',
         maxAge: 30 * 24 * 60 * 60,
         httpOnly: true,

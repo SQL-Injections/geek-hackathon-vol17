@@ -25,7 +25,7 @@ export async function loader({ request }: any) {
     }
     const classUuid = cls.uuid
     const isValid = await idToClassSeats(classUuid)
-    return isValid === undefined ? false : isValid
+    return isValid === undefined ? json({ isValid: false }) : json({ isValid: !!isValid })
 }
 // Add Class
 export async function action({ request }: any) {

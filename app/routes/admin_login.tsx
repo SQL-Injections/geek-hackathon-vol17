@@ -28,6 +28,8 @@ export async function action({ request }: any) {
         if (error.status === 422) {
             return { credentials: error.message }
         }
+        console.log(error)
+        return { error: '問題が起きました。管理者に問い合わせてください' }
     }
 }
 

@@ -10,7 +10,7 @@ export async function getStudentList(classUuid: string) {
 }
 
 export async function getStudent(classUuid: string, studentUuid: string) {
-    return prisma.student.findFirst({
+    return prisma.student.findUnique({
         where: {
             uuid: studentUuid,
         },

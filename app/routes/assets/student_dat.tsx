@@ -17,16 +17,16 @@ export async function getStudentById(classUuid: string, studentId: string) {
 }
 
 // rename displayName
-export async function reName(userId: string, classId: string,newName:string) {
+export async function reName(userId: string, classId: string, newName: string) {
     if (!userId || !classId) {
         return false
     }
-    const studentList = studentDat[classId]
-    studentList.map((student) => {
-        if (student.id == userId) {
-            student.displayName = newName;
-            return true;
-        }
-    })
-    return false;
+    // const studentList = studentDat[classId]
+    // studentList.map((student) => {
+    //     if (student.id == userId) {
+    //         student.displayName = newName;
+    //         return true;
+    //     }
+    // })
+    return false
 }

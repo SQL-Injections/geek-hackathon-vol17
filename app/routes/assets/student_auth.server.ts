@@ -1,13 +1,17 @@
 import { redirect } from '@remix-run/node'
 import { createCookieSessionStorage } from '@remix-run/node'
-import { getStudentById, getStudentList } from './student_dat'
+import { getStudentById, getStudentList } from '~/model'
+
+const sessionSecret = process.env.STUDENT_SESSION_SECRET
+if (!sessionSecret) {
+    throw new Error('STUDENT_SESSION_SECRET must be set')
+}
 
 const cookieSessionStorage = createCookieSessionStorage({
     cookie: {
         name: 'student__session',
         secure: process.env.NODE_ENV === 'production',
-        //一旦直で
-        secrets: ['kRyDcxor1dQgCXM4b4wtCeIoRi7dveedI/ZDUOwT96A='],
+        secrets: [sessionSecret],
         sameSite: 'lax',
         maxAge: 30 * 24 * 60 * 60,
         httpOnly: true,

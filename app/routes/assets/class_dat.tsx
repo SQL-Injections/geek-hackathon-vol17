@@ -1,9 +1,16 @@
-import { getRoom, createRoom, updateRoom } from '~/model/'
-import { getSeats, createSeats, updateSeats, updateSeatStudents } from '~/model/seats.server'
-import { getClassById as getClass } from '~/model/class.server'
-import { isValidStudent, getStudentList } from '~/model/student.server'
+import {
+    getRoom,
+    createRoom,
+    updateRoom,
+    getSeats,
+    createSeats,
+    updateSeats,
+    updateSeatStudents,
+    getClassById as getClass,
+    isValidStudent,
+    getStudentList,
+} from '~/model'
 import { Room, Student } from '~/model/model'
-import { prisma } from '~/model/db.server'
 import { seatSize } from '~/config'
 
 // クラスIDに基づいてRoomとその座席情報を取得

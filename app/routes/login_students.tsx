@@ -1,5 +1,5 @@
 import type { MetaFunction, LoaderFunctionArgs } from '@remix-run/node'
-import { Form, useFetcher } from '@remix-run/react'
+import { Form, useActionData, useFetcher } from '@remix-run/react'
 import styles from '~/styles/login_students.module.css'
 import { useState, useEffect } from 'react'
 import { login } from './assets/student_login'
@@ -19,12 +19,15 @@ export async function action({ request }: any) {
     try {
         return await login(credentials)
     } catch (error: any) {
+        console.log(error)
         if (error.status === 401) {
             return { credentials: error.message }
         }
         if (error.status === 422) {
             return { credentials: error.message }
         }
+        console.log(error)
+        return { credentials: '問題が起きました。管理者に問い合わせてください' }
     }
 }
 
@@ -33,7 +36,9 @@ export default function Index() {
     const [usrName, setUsrName] = useState('')
     const [classId, setClassId] = useState<string>('')
     const [isInputted, setIsInputted] = useState(false)
-    const fetcher = useFetcher()
+    const [invalidClassIdError, setInvalidClassIdError] = useState('')
+    const fetcher = useFetcher<{ isValid?: boolean }>()
+    const actionData = useActionData<{ credentials: string }>()
 
     function clickedLogin() {
         // 一応確認
@@ -49,15 +54,16 @@ export default function Index() {
         // fetcherのレスポンスをチェック
         console.log('fetcher.data', fetcher.data)
         if (fetcher.data) {
-
+            if (fetcher.data.isValid === false) {
+                setInvalidClassIdError('入力されたクラスは存在しません')
+                return
+            }
             setIsInputted(true)
-
-
+            setInvalidClassIdError('')
         }
     }, [fetcher.data])
     return (
         <>
-
             <Header />
             <Form method='post'>
                 <div className={styles.container} style={{ height: '250px' }}>
@@ -80,13 +86,19 @@ export default function Index() {
                     >
                         確認
                     </button>
+
+                    {invalidClassIdError && (
+                        <div className='absolute text-center text-red-500 font-bold top-[90%] left-[25%]'>
+                            {invalidClassIdError}
+                        </div>
+                    )}
                 </div>
                 {isInputted && (
                     <>
                         <input type='hidden' name='class_id' value={classId} />
                         <div
                             className={`${styles.container_invisible}  ${isInputted ? styles.container_visible : ''}`}
-                            style={{ height: '250px' }}
+                            style={{ height: '250px', marginBottom: '10vh' }}
                         >
                             <div className={styles.container_title}>user idとusernameを入力してください</div>
                             <input
@@ -109,6 +121,11 @@ export default function Index() {
                             <button type='submit' className={styles.loginbutton} style={{ top: '75%' }}>
                                 ログイン
                             </button>
+                            {actionData && (
+                                <div className='absolute top-[90%] left-[26%] text-center text-red-500 font-bold'>
+                                    {actionData.credentials}
+                                </div>
+                            )}
                         </div>
                     </>
                 )}

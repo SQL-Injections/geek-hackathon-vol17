@@ -21,7 +21,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 }
 
 export default function Index() {
-    const fetcher = useFetcher()
+    const fetcher = useFetcher<string>()
 
     const { classes } = useLoaderData<typeof loader>()
 
@@ -85,7 +85,7 @@ export default function Index() {
                         }
                         return (
                             // とりあえず、className
-                            <>
+                            <div key={index}>
                                 <Flex
                                     minWidth={'200px'}
                                     height='10vh'
@@ -127,7 +127,7 @@ export default function Index() {
                                         </span>
                                     </button>
                                 </Flex>
-                            </>
+                            </div>
                         )
                     })}
                 </div>

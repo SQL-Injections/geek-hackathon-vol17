@@ -14,15 +14,15 @@ datasource db {
 }
 
 model Manager {
-  id       String  @id
-  uuid     String  @default(uuid()) @unique
+  id       String
+  uuid     String  @id @default(uuid()) @unique
   password String
   classes  Class[] @relation("ManagerClasses")
 }
 
 model Student {
-  id          String   @id
-  uuid        String   @default(uuid()) @unique
+  id          String
+  uuid        String   @id @default(uuid()) @unique
   displayName String
   class       Class    @relation(fields: [classUuid], references: [uuid])
   classUuid   String
@@ -30,8 +30,8 @@ model Student {
 }
 
 model Class {
-  id        String    @id
-  uuid      String    @default(uuid()) @unique
+  id        String
+  uuid      String    @id @default(uuid()) @unique
   name      String
   manager   Manager   @relation("ManagerClasses", fields: [managerUuid], references: [uuid])
   managerUuid String
