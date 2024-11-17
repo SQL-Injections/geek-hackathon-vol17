@@ -71,8 +71,10 @@ export default function Index() {
     }
 
     async function createClass(event: React.FormEvent<HTMLFormElement>) {
-        if (SeatsArray.flat().filter((seat) => seat).length !== seatsAmount) {
-            console.log('現在選択中の席数は', SeatsArray.flat().filter((seat) => seat).length)
+        console.log(SeatsArray.flat().filter((seat) => seat.isAvailable).length)
+        console.log(SeatsArray)
+        if (SeatsArray.flat().filter((seat) => seat.isAvailable).length !== seatsAmount) {
+            console.log('現在選択中の席数は', SeatsArray.flat().filter((seat) => seat.isAvailable).length)
             setClassCreateError(
                 `選択した席数${seatsAmount}に対して現在選択中の席数は${
                     SeatsArray.flat().filter((seat) => seat).length
