@@ -32,8 +32,7 @@ export async function action({ request }: any) {
     if (cls) {
         const classUuid = cls.uuid
         const classInfo = JSON.parse(formData.classInfo)
-        let room  = await pushIdAndClass(classUuid, classInfo)
-        console.log("room : ",room)
+        await pushIdAndClass(classUuid, classInfo)
 
         const users = JSON.parse(formData.student_ids)
         console.log("users(student_dat) :await pushStudent(users, classUuid) ",users)
