@@ -6,6 +6,7 @@ import { SeatArrangement } from '~/original-components'
 import { requireUserSession } from './assets/admin_auth.server'
 import styles from '~/styles/input_seats_amount.module.css'
 import { Seat as SeatType, Student } from '~/model/model'
+import { style } from 'framer-motion/client'
 
 export const meta: MetaFunction = () => {
     return [{ title: 'New Remix App' }, { name: 'description', content: 'Welcome to Remix!' }]
@@ -18,7 +19,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 }
 
 export default function Index() {
-    const [seatsAmount, setSeatsAmount] = useState(1)
+    const [seatsAmount, setSeatsAmount] = useState(48)
+    // 初期値48に変更
     const [className, setClassName] = useState('')
     const [isInputted, setIsInputted] = useState(false)
     const [height, setHeight] = useState<number>(0)
@@ -46,8 +48,9 @@ export default function Index() {
     function clickedSeatsAmount() {
         setIsInputted(true)
         const sqrt = Math.sqrt(seatsAmount)
-        setHeight(Math.floor(sqrt) + 1)
-        setWidth(Math.floor(sqrt))
+        setHeight(Math.floor(sqrt))
+        setWidth(Math.floor(sqrt)+3)
+        //私のクラスに寄せます
     }
 
     function clickedWHAmount() {
@@ -208,6 +211,9 @@ export default function Index() {
             )}
             <div className={styles.seats_container} style={{ display: isConfirmed ? 'block' : 'none' }}>
                 <div className={styles.seats_amount_text}>使用しない座席をクリックで選択してください</div>
+                <div className={styles.kyotaku_space}>
+                    <div className={styles.kyotaku}>教卓</div>
+                </div>
                 <div className={styles.seats}>
                     <Box className={`mx-auto ${styles.seats_boxes}`}>
                         <SeatArrangement room={room} onClick={onClick} />
