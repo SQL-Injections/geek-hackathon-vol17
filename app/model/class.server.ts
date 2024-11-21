@@ -29,15 +29,7 @@ export async function getClassById(classId: string) {
 }
 
 export async function createClass(adminUuid: string, cls: Class) {
-    if (!adminUuid || !cls.id) {
-        return false
-    }
-
-    console.log('before isExistAdminByUuid')
-    const manager = await isExistAdminByUuid(adminUuid)
-    if (!manager) {
-        return false
-    }
+    //addClassですでにやっている処理なので削除
 
     console.log('before exsistingClass')
     const existingClass = await prisma.class.findFirst({
@@ -46,12 +38,12 @@ export async function createClass(adminUuid: string, cls: Class) {
             name: cls.name,
         },
     })
-    console.log(existingClass)
+    console.log("これはnullでいいやつ : ",existingClass)
     if (existingClass) {
         return false
     }
 
-    await prisma.class.create({
+    let new_class = await prisma.class.create({
         data: {
             id: cls.id,
             name: cls.name,
@@ -59,7 +51,7 @@ export async function createClass(adminUuid: string, cls: Class) {
         },
     })
     console.log('good')
-    return true
+    return new_class
 }
 
 export async function updateClass(cls: Class) {

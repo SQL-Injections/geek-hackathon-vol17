@@ -33,8 +33,7 @@ export async function addClass(usrUuid: string, cls: Class) {
     // if (classList[usrId].some((c) => c.name === cls.name)) {
     //     return false
     // }
-    await createClass(usrUuid, cls)
-    return true
+    return await createClass(usrUuid, cls)
 }
 
 export async function getClassList(adminUuid: string) {

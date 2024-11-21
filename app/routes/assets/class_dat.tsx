@@ -25,7 +25,6 @@ export async function idToClassSeats(classUuid: string): Promise<Room> {
 // クラスIDと座席情報をDBに保存
 export async function pushIdAndClass(classUuid: string, room: Room) {
     const createdRoom = await createRoom(classUuid, room)
-    console.log('/class.dat', room)
     const roomUuid = createdRoom.uuid
     await createSeats(roomUuid, room.seats)
     return true
@@ -121,12 +120,12 @@ export async function assignSeats(classUuid: string) {
         throw new Error(`Room with classId ${classUuid} not found`)
     }
 
-    console.log(totalSeatAmount)
+    console.log("totalSeatAmount:"+totalSeatAmount)
 
     const currentStudentList = roomData.seats.flatMap((seatRow) =>
         seatRow.flatMap((seat) => (seat.seatStudents.length > 0 ? seat.seatStudents : [])),
     )
-    console.log(currentStudentList)
+    console.log("currentStudentList:"+currentStudentList)
 
     const emptySeatIndices = roomData.seats.flatMap((seatRow, rowIndex) =>
         seatRow.flatMap((seat, colIndex) => (seat.isAvailable ? [{ row: rowIndex, col: colIndex }] : [])),
@@ -175,8 +174,10 @@ export async function assignSeats(classUuid: string) {
             }
         }
     })
+    console.log("ここまで４")
 
     await updateSeats(updatedSeats)
+    console.log("ここまで２")
     return updatedSeats
 }
 
