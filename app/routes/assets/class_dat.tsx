@@ -44,6 +44,7 @@ export async function modifyClass(classUuid: string, student: Student, x: number
 
     const seats = await getSeats(room.uuid)
     console.log('/assets/class_dat', seats)
+    console.log(seats[0])
 
     let seatPosition = { row: -1, column: -1 }
 
@@ -93,6 +94,18 @@ export async function handleFinish(classUuid: string) {
     return { seat: seat, finished: finished }
 }
 
+export async function checkSeates(classUuid: string) {
+    const room = await getRoom(classUuid)
+    if (!room) {
+        throw new Error(`Room with classId ${classUuid} not found`)
+    }
+    const seats = await getSeats(room.uuid)
+    if (!seats) {
+        throw new Error(`Seats with roomUuid ${room.uuid} not found`)
+    }
+    return { seat: seats }
+}
+
 export async function toggleFinished(classUuid: string) {
     const room = await getRoom(classUuid)
     if (!room) {
@@ -120,17 +133,16 @@ export async function assignSeats(classUuid: string) {
         throw new Error(`Room with classId ${classUuid} not found`)
     }
 
-    console.log("totalSeatAmount:"+totalSeatAmount)
+    // console.log("totalSeatAmount:"+totalSeatAmount)
 
     const currentStudentList = roomData.seats.flatMap((seatRow) =>
+        // 座席を選択している生徒のリスト
         seatRow.flatMap((seat) => (seat.seatStudents.length > 0 ? seat.seatStudents : [])),
     )
-    console.log("currentStudentList:"+currentStudentList)
-
     const emptySeatIndices = roomData.seats.flatMap((seatRow, rowIndex) =>
+        // 使用している席
         seatRow.flatMap((seat, colIndex) => (seat.isAvailable ? [{ row: rowIndex, col: colIndex }] : [])),
     )
-    console.log(emptySeatIndices)
 
     const unselectedStudents: Student[] = []
 
@@ -138,7 +150,13 @@ export async function assignSeats(classUuid: string) {
     const updatedSeats = roomData.seats.map((seatRow, rowIndex) =>
         seatRow.map((seat, colIndex) => {
             if (seat.seatStudents.length > 0) {
-                const randomIndex = Math.floor(Math.random() * seat.seatStudents.length)
+                let randomIndex
+                if (seat.seatStudents.length == 1) {
+                    randomIndex = 0
+                }
+                else{
+                    randomIndex = Math.floor(Math.random() * seat.seatStudents.length)
+                }
                 const selectedStudent = seat.seatStudents[randomIndex]
 
                 const remainingStudents = seat.seatStudents.filter((_, index) => index !== randomIndex)
@@ -150,15 +168,18 @@ export async function assignSeats(classUuid: string) {
         }),
     )
     console.log('未選択の学生リスト:', unselectedStudents)
+    // 抽選負けの学生
 
     const shuffledEmptySeats = emptySeatIndices.sort(() => Math.random() - 0.5)
     const studentList = await getStudentList(classUuid)
     const missingStudents = studentList.filter(
+        // 座席選択してない人たち
         (student) => !currentStudentList.some((currentStudent) => currentStudent.id === student.id),
     )
 
     const unregisteredCount = totalSeatAmount - studentList.length
     const unregisteredStudents: Student[] = Array.from({ length: unregisteredCount }, (_, index) => ({
+        // 名前が登録されてない学生
         id: `unregistered${index}`,
         displayName: String(index + 1),
     }))
@@ -167,17 +188,14 @@ export async function assignSeats(classUuid: string) {
 
     // 空席に学生をランダムに割り当てる
     shuffledEmptySeats.forEach(({ row, col }) => {
-        if (studentsToAssign.length > 0) {
+        if (roomData.seats[row][col].seatStudents.length == 0) {
             const student = studentsToAssign.shift()
             if (student) {
                 updatedSeats[row][col] = { ...updatedSeats[row][col], seatStudents: [student] }
             }
         }
     })
-    console.log("ここまで４")
-
     await updateSeats(updatedSeats)
-    console.log("ここまで２")
     return updatedSeats
 }
 
