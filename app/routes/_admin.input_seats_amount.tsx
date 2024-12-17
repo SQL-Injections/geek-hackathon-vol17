@@ -6,7 +6,7 @@ import { SeatArrangement } from '~/original-components'
 import { requireUserSession } from './assets/admin_auth.server'
 import styles from '~/styles/input_seats_amount.module.css'
 import { Seat as SeatType, Student } from '~/model/model'
-import { style } from 'framer-motion/client'
+import { style, use } from 'framer-motion/client'
 
 export const meta: MetaFunction = () => {
     return [{ title: 'New Remix App' }, { name: 'description', content: 'Welcome to Remix!' }]
@@ -21,6 +21,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function Index() {
     const [seatsAmount, setSeatsAmount] = useState(48)
     // 初期値48に変更
+    const [nowSeatsAmont,setNowSeatsAmont] = useState(0)
     const [className, setClassName] = useState('')
     const [isInputted, setIsInputted] = useState(false)
     const [height, setHeight] = useState<number>(0)
@@ -65,6 +66,7 @@ export default function Index() {
             )
             return false
         }
+        setNowSeatsAmont(height*width)
         setErrMsg('')
         return true
     }
@@ -78,7 +80,7 @@ export default function Index() {
             console.log('現在選択中の席数は', SeatsArray.flat().filter((seat) => seat.isAvailable).length)
             setClassCreateError(
                 `選択した席数${seatsAmount}に対して現在選択中の席数は${
-                    SeatsArray.flat().filter((seat) => seat).length
+                    SeatsArray.flat().filter((seat) => seat.isAvailable).length
                 }個です。`,
             )
             event.preventDefault()
@@ -119,6 +121,7 @@ export default function Index() {
                 ),
             ),
         )
+        setNowSeatsAmont(SeatsArray.flat().filter((seat) => seat.isAvailable).length -1)
     }
 
     const room = {
@@ -213,6 +216,11 @@ export default function Index() {
                 <div className={styles.seats_amount_text}>使用しない座席をクリックで選択してください</div>
                 <div className={styles.kyotaku_space}>
                     <div className={styles.kyotaku}>教卓</div>
+                    <div>
+                        <div>{nowSeatsAmont}</div>
+                        <div>/</div>
+                        <div>{seatsAmount}</div>
+                    </div>
                 </div>
                 <div className={styles.seats}>
                     <Box className={`mx-auto ${styles.seats_boxes}`}>
