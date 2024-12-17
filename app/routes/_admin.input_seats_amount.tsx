@@ -6,7 +6,6 @@ import { SeatArrangement } from '~/original-components'
 import { requireUserSession } from './assets/admin_auth.server'
 import styles from '~/styles/input_seats_amount.module.css'
 import { Seat as SeatType, Student } from '~/model/model'
-import { style, use } from 'framer-motion/client'
 
 export const meta: MetaFunction = () => {
     return [{ title: 'New Remix App' }, { name: 'description', content: 'Welcome to Remix!' }]
@@ -216,10 +215,13 @@ export default function Index() {
                 <div className={styles.seats_amount_text}>使用しない座席をクリックで選択してください</div>
                 <div className={styles.kyotaku_space}>
                     <div className={styles.kyotaku}>教卓</div>
-                    <div>
-                        <div>{nowSeatsAmont}</div>
-                        <div>/</div>
-                        <div>{seatsAmount}</div>
+                    <div className={styles.now_seats}>
+                        <div>現在選択中の座席数</div>
+                        <div className={styles.num_seats}>
+                            <div>{nowSeatsAmont}</div>
+                            <div>/</div>
+                            <div>{seatsAmount}</div>
+                        </div>
                     </div>
                 </div>
                 <div className={styles.seats}>
