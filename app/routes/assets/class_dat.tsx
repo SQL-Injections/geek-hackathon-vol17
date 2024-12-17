@@ -94,18 +94,6 @@ export async function handleFinish(classUuid: string) {
     return { seat: seat, finished: finished }
 }
 
-export async function checkSeates(classUuid: string) {
-    const room = await getRoom(classUuid)
-    if (!room) {
-        throw new Error(`Room with classId ${classUuid} not found`)
-    }
-    const seats = await getSeats(room.uuid)
-    if (!seats) {
-        throw new Error(`Seats with roomUuid ${room.uuid} not found`)
-    }
-    return { seat: seats }
-}
-
 export async function toggleFinished(classUuid: string) {
     const room = await getRoom(classUuid)
     if (!room) {
