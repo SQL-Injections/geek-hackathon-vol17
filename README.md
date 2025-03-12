@@ -92,6 +92,10 @@ npx prisma studio
 
 本番環境にデプロイする際は、ホスティングプロバイダーのガイドに従い、必要な環境変数を設定してください。
 
+仮デプロイ: Render (https://geek-hackathon-vol17.onrender.com/)
+
+※ 起動に時間がかかる場合があります。（５分程度）
+
 ## スクリプト
 
 -   `npm run dev`: 開発サーバーを起動します。
